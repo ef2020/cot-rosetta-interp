@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -12,8 +13,12 @@ from rosetta_interp.puzzles import (
     Puzzle,
     Question,
     load_local,
+    normalize_raw,
+    parse_uklo_txt,
     write_local,
 )
+
+FIXTURES = Path(__file__).parent / "fixtures" / "uklo_raw"
 
 # A minimal example for round-trip testing. Real puzzle fixtures go in
 # tests/fixtures/ once we normalize them.
@@ -85,3 +90,78 @@ def test_unicode_roundtrip(tmp_path):
     loaded = load_local(out)
     assert loaded.context_pairs[0].source == "café"
     assert loaded.context_pairs[0].target == "кошка"
+
+
+# ---------------------------------------------------------------------------
+# UKLO .txt adapter tests
+# ---------------------------------------------------------------------------
+
+
+def _normalize_fixture(name: str) -> Puzzle:
+    path = FIXTURES / name
+    raw = parse_uklo_txt(path.read_text(), filename=path.name)
+    return normalize_raw(raw, source="uklo_txt")
+
+
+def test_uklo_txt_pali_round_1_real_tabs():
+    p = _normalize_fixture("2013.3-Pali.txt")
+    assert p.id == "uklo-2013-r1-pali"
+    assert p.year == 2013
+    assert p.round == "Round 1"
+    assert p.difficulty == "Intermediate"
+    assert p.language == "Pali"
+    # 6 numbered context rows in the puzzle (3-col `N\tsource\ttarget`).
+    assert len(p.context_pairs) == 6
+    assert p.context_pairs[0].source == "mahāmatto nisīdati"
+    assert p.context_pairs[0].target == "The minister sits down."
+    # 2 main questions x (2 + 6) subprompts.
+    assert len(p.questions) == 8
+    # JSON-encoded list answers get decoded into list[str].
+    multi = next(q for q in p.questions if "rājo gāmassa" in q.prompt)
+    assert isinstance(multi.answer, list) and len(multi.answer) == 4
+    # Total marks (10) distributed evenly across 8 questions.
+    assert p.max_score() == pytest.approx(10.0)
+
+
+def test_uklo_txt_gilbertese_round_1_two_col_tabs():
+    p = _normalize_fixture("2023_R1_3-Gilbertese.txt")
+    assert p.id == "uklo-2023-r1-gilbertese"
+    assert p.round == "Round 1"
+    assert p.language == "Gilbertese"
+    # 10 two-column tab-separated rows.
+    assert len(p.context_pairs) == 10
+    assert p.context_pairs[0].source == "Ko nakonako ŋkoe"
+    assert p.context_pairs[0].target == "You are walking"
+    # Fuzzy / multi-answer questions decoded as lists.
+    assert any(isinstance(q.answer, list) and len(q.answer) >= 2 for q in p.questions)
+
+
+def test_uklo_txt_taa_round_2_literal_backslash_tabs():
+    p = _normalize_fixture("2024_R2_2-Taa.txt")
+    assert p.id == "uklo-2024-r2-taa"
+    assert p.round == "Round 2"
+    assert p.difficulty == "Round2"
+    assert p.language == "Taa"
+    # Literal "\t" delimiters get normalized; 8 context rows present.
+    assert len(p.context_pairs) == 8
+    assert p.context_pairs[0].target == "His duck wants the buchu powder."
+    # "Q 2.3 Explain your solution." has an empty answer — should be dropped.
+    assert all(q.answer for q in p.questions)
+
+
+def test_uklo_filename_accepts_dash_separator():
+    """Filenames like '2024-R2_4-Coptic.txt' use '-' as the year separator."""
+    from rosetta_interp.puzzles import _parse_filename
+
+    meta = _parse_filename("2024-R2_4-Coptic.txt")
+    assert meta == {"year": 2024, "round": "R2", "problem": 4, "lang_slug": "Coptic"}
+
+
+def test_parse_uklo_txt_requires_trailing_json():
+    with pytest.raises(ValueError, match="no trailing JSON"):
+        parse_uklo_txt("just prose, no questions", filename="bogus.txt")
+
+
+def test_normalize_raw_unknown_source_still_errors():
+    with pytest.raises(NotImplementedError):
+        normalize_raw({}, source="lingoly-csv")
