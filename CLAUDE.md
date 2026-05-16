@@ -98,6 +98,7 @@ Do not switch to GCP until Phase 1 results are in hand — Phase 1 is API-only a
 - **Project:** `cot-rosetta-interp`
 - **Service account:** `claude-agent@cot-rosetta-interp.iam.gserviceaccount.com`
 - **Roles granted:**
+  - `roles/storage.admin` — create and manage GCS buckets (e.g., `cot-rosetta-interp-data`)
   - `roles/storage.objectAdmin` — read/write activations and model artifacts in GCS
   - `roles/compute.instanceAdmin.v1` — provision GPU VMs for vLLM inference
   - `roles/logging.viewer` — read Cloud Logging output from GPU jobs
