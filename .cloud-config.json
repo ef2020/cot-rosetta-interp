@@ -3,6 +3,7 @@
   "project_id": "cot-rosetta-interp",
   "service_account": "claude-agent@cot-rosetta-interp.iam.gserviceaccount.com",
   "roles": [
+    "roles/storage.admin",
     "roles/storage.objectAdmin",
     "roles/compute.instanceAdmin.v1",
     "roles/logging.viewer",

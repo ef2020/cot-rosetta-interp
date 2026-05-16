@@ -20,6 +20,7 @@ Goal: produce a clean table of UKLO Rosetta accuracy across the current model zo
 
 ### Setup
 
+- [ ] Ingest the full UKLO corpus directly from https://www.uklo.org/past-exam-papers/ (PDFs of past papers + mark schemes). Check licensing/terms first; write a `source="uklo_pdf"` adapter for `normalize_raw`; upload raw PDFs to `gs://cot-rosetta-interp-data/raw/uklo_pdf/` and normalized JSONs to `gs://.../puzzles/`. The Phase 0 `source="uklo_txt"` ingest (23 puzzles from ef2020/PuzzleEvaluation) is a subset and a sanity check, not the corpus.
 - [ ] Select pilot puzzle set: 20–30 UKLO puzzles spanning Beginner / Foundation / Intermediate / Advanced / Round 2, with a mix of phenomena (morphology, syntax, number systems, orthography)
 - [ ] Annotate each pilot puzzle with `phenomena` tags following the LINGOLY taxonomy where applicable
 - [ ] Implement `src/rosetta_interp/scoring.py` with UKLO partial-credit rules; unit-test against published mark schemes
