@@ -9,8 +9,10 @@ this README. The puzzle corpus itself is in:
 
 ```
 gs://cot-rosetta-interp-data/
-├── raw/                    # original .txt files from ef2020/PuzzleEvaluation
-└── puzzles/                # normalized JSON, one file per puzzle
+├── raw/                    # original .txt files from ef2020/PuzzleEvaluation (Phase-0 sanity subset, 23 files)
+├── raw/uklo_pdf/           # original UKLO PDFs scraped from www.uklo.org and archives.uklo.org (347 files, ~120 MB)
+├── puzzles/                # normalized JSON, one file per puzzle
+└── scratch/                # ephemeral working files (URL manifests, scrape logs)
 ```
 
 ## Why GCS instead of a git submodule
@@ -23,8 +25,26 @@ JSONs, eventually activation traces) in one place.
 
 ## How puzzles get into the bucket
 
+### UKLO PDF corpus (full Phase-1 source)
+
+`uklo.org` and `archives.uklo.org` block residential / Anthropic-sandbox IPs
+behind a SiteGround CAPTCHA but allow Google Cloud IPs. Scraping therefore
+runs from a short-lived Compute Engine VM:
+
 ```bash
-# One-shot upload from PuzzleEvaluation -> GCS:
+uv run python scripts/scrape_uklo_pdfs.py        # provisions VM, fetches index pages,
+                                                 # downloads all PDFs to gs://.../raw/uklo_pdf/,
+                                                 # tears VM down on completion
+```
+
+The script writes the URL manifest to `gs://.../scratch/uklo_pdf_urls.txt`
+and per-fetch logs to `gs://.../scratch/download_logs/`. Re-running it is
+idempotent at the bucket level (rsync), but uses a fresh VM each run.
+
+### PuzzleEvaluation `.txt` subset (Phase-0 sanity check)
+
+```bash
+# Subset that pre-dates the full PDF scrape; 23 puzzles, plain-text format.
 uv run python scripts/upload_puzzles.py \
     --bucket cot-rosetta-interp-data \
     --repo ef2020/PuzzleEvaluation \

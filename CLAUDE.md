@@ -31,8 +31,7 @@ A research project investigating how large language models solve UKLO-style Rose
 ├── .env.example                    # API key template
 ├── .gitignore
 ├── data/
-│   ├── README.md
-│   └── puzzles/                    # UKLO puzzles, JSON-normalized
+│   └── README.md                   # Pointer to GCS; no puzzle JSON in git
 ├── src/rosetta_interp/
 │   ├── __init__.py
 │   ├── puzzles.py                  # Load + normalize puzzles
@@ -56,7 +55,17 @@ A research project investigating how large language models solve UKLO-style Rose
 
 ## Data sources
 
-Puzzles come from the UK Linguistics Olympiad (UKLO), which the user already has in a separate repo (`PuzzleEvaluation`). Pull in as a git submodule under `data/puzzles-raw/` and write a normalizer that emits `data/puzzles/<puzzle_id>.json` with a stable schema. **Do not** commit raw puzzles if they're under restrictive license; check before adding to git.
+Puzzles come from the UK Linguistics Olympiad (UKLO). **All puzzle data lives in Google Cloud Storage, not in git.** We do not use git submodules.
+
+Bucket: `gs://cot-rosetta-interp-data/`
+- `raw/uklo_pdf/` — original UKLO PDFs scraped from `www.uklo.org` and `archives.uklo.org` (filename = flattened source URL path; one PDF per file)
+- `raw/` — ad-hoc raw text drops from prior ingests (e.g., the `ef2020/PuzzleEvaluation` `.txt` files used for the Phase 0 sanity-check subset)
+- `puzzles/` — normalized JSONs, one per puzzle, conforming to the schema below; filenames are `<puzzle_id>.json`
+- `scratch/` — ephemeral working files (URL manifests, VM logs, probe output)
+
+`uklo.org` sits behind a SiteGround CAPTCHA that blocks residential / Anthropic-sandbox IPs (HTTP 202 challenge on every request) but does **not** block Google Cloud IPs. To re-scrape or expand the corpus, launch a Compute Engine VM (see `scripts/`) and have it `curl` the index pages and PDFs into the bucket. Do not try to fetch from inside this Claude Code sandbox — it will silently get CAPTCHA HTML.
+
+UKLO terms ("free for educational use") cover research use of the puzzles. The bucket is private; do not make it public.
 
 ### Puzzle schema (proposed)
 
@@ -78,19 +87,24 @@ Puzzles come from the UK Linguistics Olympiad (UKLO), which the user already has
 
 ## Development setup
 
-### Local (laptop, Phase 1)
+**This project is fully cloud-based. There is no laptop-only path; do not assume a developer is running anything on a personal machine.** Work happens in one of two execution surfaces:
+
+1. **Claude Code on the Web sandbox** — the default interactive context. Each session starts in a fresh ephemeral container with the repo cloned, `uv` installed, and GCP service-account credentials decrypted by `.claude/hooks/cloud-auth.sh` (so `gcloud` and `gsutil` Just Work). Use this surface for code edits, test runs, small Python scripts, and orchestrating cloud jobs. Anything not committed and pushed is lost when the container is reclaimed. The sandbox's egress is restricted: GCS, GitHub, Hugging Face, and PyPI work; `uklo.org`, `archives.uklo.org`, and `web.archive.org` do not.
+
+2. **Google Cloud resources, launched from the sandbox.** Anything that needs unrestricted egress, GPUs, scheduled execution, or long-running work runs in GCP. Pick the lightest tool for the job:
+   - **Compute Engine VMs** — short-lived `e2-micro`/`e2-small` for scraping and ad-hoc shell tasks; A100/H100 (Phase 3) for vLLM inference + activation capture. Always set `--instance-termination-action=DELETE` and `--max-run-duration=…` so VMs auto-clean; use a startup script + GCS for I/O instead of `gcloud compute ssh`.
+   - **Cloud Functions / Cloud Run** — small request-driven jobs.
+   - **Cloud Tasks / Cloud Scheduler** — recurring jobs (e.g., periodic re-scrape, batch model-eval kickoff).
+   See `scripts/` for working examples (e.g., the UKLO scraping VM).
 
 ```bash
-uv sync
-cp .env.example .env  # fill in ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY
-uv run pytest tests/
+# In a fresh sandbox session — cloud-auth has already run via SessionStart hook.
+uv sync                            # install Phase-1 deps
+uv run pytest tests/               # local-only tests (schema, scoring)
+gcloud storage ls gs://cot-rosetta-interp-data/   # confirm GCS access
 ```
 
-### Cloud (GPU, Phase 2+)
-
-Cloud credentials managed via `cloud-bootstrap` (see https://github.com/ipeirotis/cloud-bootstrap). GCP project: `cot-rosetta-interp`. GPU SKUs to target: T4 for 1.5B/7B, A100-40GB for 14B, A100-80GB or H100 for 32B. Use vLLM for inference, store activations to a regional bucket (do not commit).
-
-Do not switch to GCP until Phase 1 results are in hand — Phase 1 is API-only and faster to iterate locally.
+GPU work (Phase 3): T4 for 1.5B/7B, A100-40GB for 14B, A100-80GB or H100 for 32B; use vLLM for inference and stream activations to a regional bucket (do not commit).
 
 ## Cloud Credentials
 
