@@ -1,0 +1,16 @@
+# Cloud -- never commit plaintext credentials
+credentials.json
+credentials_clean.json
+/tmp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Project
+results/
+data/puzzles-raw/

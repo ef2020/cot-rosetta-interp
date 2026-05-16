@@ -88,9 +88,27 @@ uv run pytest tests/
 
 ### Cloud (GPU, Phase 2+)
 
-Cloud credentials managed via `cloud-bootstrap` (see https://github.com/ipeirotis/cloud-bootstrap). GCP project: TBD. GPU SKUs to target: T4 for 1.5B/7B, A100-40GB for 14B, A100-80GB or H100 for 32B. Use vLLM for inference, store activations to a regional bucket (do not commit).
+Cloud credentials managed via `cloud-bootstrap` (see https://github.com/ipeirotis/cloud-bootstrap). GCP project: `cot-rosetta-interp`. GPU SKUs to target: T4 for 1.5B/7B, A100-40GB for 14B, A100-80GB or H100 for 32B. Use vLLM for inference, store activations to a regional bucket (do not commit).
 
 Do not switch to GCP until Phase 1 results are in hand — Phase 1 is API-only and faster to iterate locally.
+
+## Cloud Credentials
+
+- **Provider:** GCP
+- **Project:** `cot-rosetta-interp`
+- **Service account:** `claude-agent@cot-rosetta-interp.iam.gserviceaccount.com`
+- **Roles granted:**
+  - `roles/storage.objectAdmin` — read/write activations and model artifacts in GCS
+  - `roles/compute.instanceAdmin.v1` — provision GPU VMs for vLLM inference
+  - `roles/logging.viewer` — read Cloud Logging output from GPU jobs
+  - `roles/iam.serviceAccountUser` — attach the service account to VMs it creates
+- **APIs enabled:** Cloud Resource Manager, Compute, Storage, Logging, IAM
+
+This is a multi-user setup. Each team member has their own `.cloud-credentials.<email>.enc` file in the repo, encrypted with their personal passphrase (env var `GCP_CREDENTIALS_KEY` or `CLOUD_CREDENTIALS_KEY`). Passphrases are never shared.
+
+- **Authentication:** automatic on every session via `.claude/hooks/cloud-auth.sh` (SessionStart hook).
+- **New team members:** ask the `cloud-bootstrap` skill to run the **Add Team Member** flow; they need their own GCP account with `Service Account Key Admin`.
+- **Escalating permissions:** if a command fails with 403, the `cloud-bootstrap` skill handles the permission-escalation flow (a project Owner must approve and grant the new role).
 
 ## Conventions
 
