@@ -31,7 +31,6 @@ env/
 
 # ---- uv ----
 .uv/
-uv.lock      # opinion: commit uv.lock for reproducibility. Remove this line if you want to commit it.
 
 # ---- Notebooks ----
 .ipynb_checkpoints/
