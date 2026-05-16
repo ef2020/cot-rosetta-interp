@@ -95,7 +95,28 @@ UKLO terms ("free for educational use") cover research use of the puzzles. The b
    - **Compute Engine VMs** — short-lived `e2-micro`/`e2-small` for scraping and ad-hoc shell tasks; A100/H100 (Phase 3) for vLLM inference + activation capture. Always set `--instance-termination-action=DELETE` and `--max-run-duration=…` so VMs auto-clean; use a startup script + GCS for I/O instead of `gcloud compute ssh`.
    - **Cloud Functions / Cloud Run** — small request-driven jobs.
    - **Cloud Tasks / Cloud Scheduler** — recurring jobs (e.g., periodic re-scrape, batch model-eval kickoff).
-   See `scripts/` for working examples (e.g., the UKLO scraping VM).
+   See `scripts/` for working examples (e.g., the UKLO scraping VM, the `cloud_runner.py` wrapper).
+
+### When the sandbox blocks you, reach for GCP *before* asking the user
+
+The sandbox has real, predictable failure modes. When you hit one, the default move is to delegate to GCP, **not** to abandon the task or open an `AskUserQuestion`. Concretely:
+
+| Symptom in the sandbox | Default GCP move |
+|---|---|
+| HTTP 202 + SiteGround / Cloudflare CAPTCHA HTML on a fetch | One-shot Compute Engine VM via `scripts/cloud_runner.py`; GCP IPs typically pass these challenges. |
+| `Blocked by egress policy` from a domain you need (e.g. `web.archive.org`) | Same — VM in `us-central1-a` has unrestricted egress. |
+| Out-of-memory or `Killed` running a large script | VM with `--machine-type=e2-standard-4` (or larger); never try to optimize around it in-sandbox. |
+| Need a GPU (HF model, vLLM, transformer-lens) | A100/H100 VM, or batch via a Vertex AI custom job — never attempt on the sandbox CPU. |
+| Job takes more than ~10 min and you'd be sitting idle | Background it on a VM, write a `DONE.txt` marker to GCS, poll for it. |
+| Need to run on a schedule | Cloud Scheduler → Cloud Run / Cloud Function. |
+
+**Process when blocked:**
+
+1. Diagnose the failure mode (one targeted command — don't keep retrying the same fetch).
+2. If it matches the table above, draft and run the GCP delegation. The wrapper at `scripts/cloud_runner.py` exists so this is a single command — use it. Don't reinvent VM-bringup boilerplate per task.
+3. Only fall back to `AskUserQuestion` if (a) the GCP path itself fails, (b) the work would cost more than a few dollars, or (c) the policy / licensing implications need a human call.
+
+The pre-approved permissions in `.claude/settings.json` cover the gcloud verbs needed for this pattern (compute create/delete with the project's service account, gcloud storage cp/ls/cat/rm, gcloud compute instances list), so you should not be prompted for any of them. If a `gcloud` command does prompt, that's a signal it's outside the safe-by-default envelope (e.g., it touches IAM or networking) and *is* worth pausing on.
 
 ```bash
 # In a fresh sandbox session — cloud-auth has already run via SessionStart hook.

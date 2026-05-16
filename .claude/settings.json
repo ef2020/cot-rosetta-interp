@@ -12,5 +12,48 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(gcloud config get-value:*)",
+      "Bash(gcloud config list:*)",
+      "Bash(gcloud auth list:*)",
+      "Bash(gcloud services list:*)",
+
+      "Bash(gcloud storage ls:*)",
+      "Bash(gcloud storage cat:*)",
+      "Bash(gcloud storage du:*)",
+      "Bash(gcloud storage cp:*)",
+      "Bash(gcloud storage rsync:*)",
+      "Bash(gsutil ls:*)",
+      "Bash(gsutil cat:*)",
+      "Bash(gsutil cp:*)",
+      "Bash(gsutil -m cp:*)",
+      "Bash(gsutil rsync:*)",
+      "Bash(gsutil -m rsync:*)",
+
+      "Bash(gcloud compute zones list:*)",
+      "Bash(gcloud compute instances list:*)",
+      "Bash(gcloud compute instances describe:*)",
+      "Bash(gcloud compute instances create:*)",
+      "Bash(gcloud compute instances delete:*)",
+      "Bash(gcloud compute instances stop:*)",
+      "Bash(gcloud compute instances get-serial-port-output:*)",
+      "Bash(gcloud compute instances tail-serial-port-output:*)",
+
+      "Bash(gcloud logging read:*)",
+
+      "Bash(uv run python scripts/cloud_runner.py:*)",
+      "Bash(uv run python scripts/scrape_uklo_pdfs.py:*)"
+    ],
+    "ask": [
+      "Bash(gcloud projects:*)",
+      "Bash(gcloud iam:*)",
+      "Bash(gcloud compute networks:*)",
+      "Bash(gcloud compute firewall-rules:*)",
+      "Bash(gcloud storage buckets create:*)",
+      "Bash(gcloud storage buckets delete:*)",
+      "Bash(gcloud storage rm -r:*)"
+    ]
   }
 }
