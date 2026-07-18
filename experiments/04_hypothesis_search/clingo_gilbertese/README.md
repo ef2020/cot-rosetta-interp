@@ -19,7 +19,9 @@ Target question: Q 3.1(a) *"E noorii taian uaa te aomata."* → English.
 **Result.** Unique induced grammar matching the official commentary (VOS order, `e`/`a`
 subject-number markers, `na` future / zero past, `te`/`taian` articles, object-number agreement
 suffixes `-a`/`-i` on stems `noori-`/`kune-`). Decoded answer **"The man saw the fruits."** =
-official mark scheme. Leave-one-out over the 8 context pairs: 8/8 unique correct decodes.
+official mark scheme. Every rival reading of the question (wrong number, tense, subject, or
+verb) is certified UNSAT when forced. Leave-one-out over the 8 context pairs: 8/8 unique
+correct decodes.
 
 **Rerun.**
 
