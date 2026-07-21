@@ -96,9 +96,14 @@ Goal: on puzzles where both the chosen open model and a frontier closed model su
 
 ## Phase 4 — Hypothesis search comparison
 
-- [ ] Implement an executable mini-grammar DSL for UKLO Rosetta puzzles (simple morpheme alignment + concatenation rules sufficient for ~70% of UKLO puzzles)
-- [ ] Implement a propose-and-verify loop: LLM proposes mini-grammar in DSL → verifier runs it on context pairs → feedback loop
-- [ ] Compare on the Phase 1 puzzle set: (a) plain CoT, (b) reasoning model extended thinking, (c) hypothesis-search loop, all with the same backbone model
+See `experiments/04_hypothesis_search/DESIGN.md` for the solver-side design (clingo/ASP, tiered hypothesis-space strategy, underdetermination handling, mech-interp collaboration hooks).
+
+- [x] Solver spike: clingo end-to-end on UKLO 2023 Gilbertese Q3.1(a) — unique induced grammar matching the official commentary, UNSAT-certified counterfactuals, 8/8 leave-one-out (`experiments/04_hypothesis_search/clingo_gilbertese/`)
+- [ ] Tier-1 generic hypothesis space (segmentation + MDL, no per-puzzle authoring); validate on Malay q4 and Ndebele q1 from the collaborator's frozen corpus, then Tshiluba and Basque
+- [ ] Degradation study: remove context pairs until decode is ambiguous; implement enumerate → project → MDL-tiebreak → LLM-prior pipeline for underdetermined items
+- [ ] Implement the propose-and-verify loop (Arm C): LLM proposes ASP hypothesis-space extensions → clingo certifies (UNSAT counterexample / ambiguity report / unique + LOO) → feedback loop
+- [ ] Export solver-derived probe targets and certified corruptions for the collaborator's 9-item mech-interp corpus
+- [ ] Compare on the Phase 1 puzzle set: (a) plain CoT, (b) reasoning model extended thinking, (c) solver-only with LLM grounding (Arm B), (d) hypothesis-search loop (Arm C), all with the same backbone model; break out by `phenomena` tags
 - [ ] Analyze: does explicit hypothesis search disproportionately help on Pattern-format puzzles where the "Curse of CoT" finding predicts CoT should hurt?
 - [ ] Write Phase 4 report
 
