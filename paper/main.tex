@@ -1,0 +1,441 @@
+% =============================================================================
+% Grammars as Probes — workshop paper draft
+% Target: Interpretability for Scientific Discovery workshop, NeurIPS 2026
+%         https://interpretability4discovery.github.io/
+%         5 pages main text (references + appendices excluded), non-archival.
+%
+% NOTE ON TEMPLATE: the sandbox cannot fetch the official workshop template
+% (egress-restricted). The preamble below reproduces NeurIPS geometry and
+% typography (10pt Times, 5.5in x 9in text block) so that page counts are
+% realistic. Swap in the official style file before submission and delete
+% the geometry block.
+% =============================================================================
+\documentclass[10pt]{article}
+
+% ---- NeurIPS-approximating preamble (replace with official .sty) ------------
+\usepackage[textwidth=5.5in,textheight=9in]{geometry}
+\usepackage{mathptmx}            % Times text + math
+\usepackage{courier}             % Type1 tt font (avoids missing EC bitmap fonts)
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\bibsep}{2pt}
+
+% Draft machinery: inline TODO marks for results that do not exist yet.
+% Set \drafttrue -> red TODOs visible; \draftfalse for a clean read.
+\newif\ifdraft\drafttrue
+\newcommand{\TODO}[1]{\ifdraft\textcolor{red!70!black}{[TODO: #1]}\fi}
+\newcommand{\PLANNED}[1]{\textcolor{blue!60!black}{\emph{#1}}}
+
+\title{\bf Grammars as Probes:\\
+Solver-Certified Knowledge Extraction\\
+and Localization in Reasoning Models}
+
+\author{%
+  Anonymous Author(s)\\   % de-anonymize per workshop policy before submission
+  Affiliation\\
+  \texttt{email}\\
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Interpretability studies of reasoning models rarely have ground truth for
+\emph{what the model claims to know}: probed concepts are chosen by the
+experimenter, and chain-of-thought (CoT) faithfulness is tested at the level of
+whole prose traces. We introduce a setting in which the model's claimed
+knowledge is a complete, machine-verified symbolic object. Given a Rosetta
+Stone linguistic puzzle---a handful of sentence pairs in an unfamiliar language
+and a held-out translation question---a reasoning LLM must externalize its
+analysis not as prose but as an \emph{executable mini-grammar}: a lexicon,
+morphological rules, and ordering constraints in a fixed language-agnostic
+format. An answer-set-programming checker \emph{certifies} the grammar by
+requiring it to regenerate every context pair exactly and decode the held-out
+question, returning counterexamples that drive a propose--verify--repair loop.
+Each certified rule then becomes a probe target: solver-generated, certified
+contrastive minimal pairs let us ask, layer by layer in an open-weight
+reasoning model, where each rule is linearly decodable and where it causally
+drives the answer under activation patching. This sharpens CoT faithfulness
+from trace level to \emph{rule level}: is each rule the model wrote down
+represented where the computation needs it, or is the written grammar post hoc?
+We describe the pipeline, validate its certification core on a UKLO
+puzzle---where the solver induces a unique grammar matching the official
+solution and certifies all rival readings unsatisfiable---and report the
+experimental design for localization on 2--3 puzzles with
+DeepSeek-R1-Distill models. \TODO{finalize abstract once results land}
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+A central promise of interpretability is to turn what models internally encode
+into knowledge that domain experts can test and validate. Doing so requires an
+answer to a deceptively hard question: what, exactly, does the model claim to
+know? Probing and feature-steering studies typically answer by fiat---the
+experimenter picks a concept, trains a probe, and reports decodability
+\citep{axbench}. CoT faithfulness studies ask whether the model's verbalized
+reasoning matters causally, but operate on free-form prose traces whose
+propositional content is itself uncertain \citep{lanham2023,turpin2023}.
+In both cases there is no independently verified statement of the knowledge
+under test.
+
+We study a task family where such a statement can be extracted and
+\emph{certified}. Rosetta Stone linguistic puzzles---the core format of the UK
+Linguistics Olympiad (UKLO) and of the LINGOLY benchmark
+\citep{lingoly,bozhanov2013}---present a small set of translated sentence
+pairs in an unfamiliar language, followed by held-out translation questions.
+They come with built-in verification: a proposed grammar of the language
+either regenerates the context pairs exactly, or it does not. Human solvers
+proceed by an explicit chain of contextual inferences (segment, align,
+hypothesize a morpheme, test against the next pair, revise), and reasoning
+LLMs verbalize superficially similar chains, yet perform far below human
+solvers on these puzzles \citep{llmsolvegen,unveiling}.
+
+We exploit the verifiability in a three-stage pipeline (Figure~\ref{fig:pipeline}):
+
+\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
+\item \textbf{Externalize.} A reasoning LLM reads the puzzle and emits its
+analysis not as prose CoT but as an executable mini-grammar: a lexicon
+(form\,$\leftrightarrow$\,meaning), morphological rules, and ordering
+constraints, in a fixed language-agnostic schema that compiles to answer set
+programming (ASP) \citep{clingo}.
+\item \textbf{Certify.} A fixed solver program checks derivability: every
+context pair must be generated exactly and the held-out question must decode.
+Failures return the offending pair as a counterexample, and the LLM revises in
+a budget-capped propose--verify--repair loop, in the spirit of hypothesis
+search \citep{wang2023hypothesis}. Acceptance is objective---the model cannot
+hand-wave a rule the data contradicts.
+\item \textbf{Localize.} Each rule in the certified grammar (e.g., \emph{the
+verb agrees with object number}; \emph{future is marked by \texttt{na}})
+becomes a probe target. Using an open-weight reasoning model, layer-wise
+linear probes and activation patching over solver-generated, certified
+contrastive minimal pairs answer: at which layers is rule $R$ decodable, and
+where is it causally used?
+\end{enumerate}
+
+The headline question is the \textbf{faithfulness of externalized knowledge}:
+does the model internally represent and use the rules it wrote down, or is the
+certified grammar a post-hoc rationalization of a different computation?
+Either answer is informative, and the certified grammar makes the question
+precise enough to test: unlike trace-level faithfulness probes (truncation,
+paraphrase, mistake injection \citep{lanham2023}), every probed claim here is
+a discrete, independently testable rule that provably accounts for the data.
+
+\paragraph{Contributions.}
+(i)~A language-agnostic executable grammar format for Rosetta puzzles with an
+ASP-based certifier that returns machine-checkable verdicts (certified /
+counterexample / format error) and drives an LLM repair loop
+(\S\ref{sec:method-format}--\ref{sec:method-loop}).
+(ii)~A method for compiling each certified rule into \emph{certified}
+contrastive minimal pairs, replacing hand-crafted probe datasets
+(\S\ref{sec:method-localize}).
+(iii)~A rule-level reformulation of CoT faithfulness---written vs.\ decodable
+vs.\ causally used---with concrete predictions that activation patching can
+falsify (\S\ref{sec:method-faithful}).
+(iv)~Validation of the certification core on UKLO 2023 Gilbertese
+(\S\ref{sec:prelim}) and a pre-registered experimental design on three UKLO
+puzzles with DeepSeek-R1-Distill models (\S\ref{sec:setup}).
+\TODO{re-balance contribution list once localization results exist}
+
+This is work in progress: the certification machinery and study design are
+complete; extraction and localization experiments are underway. We state for
+each result below whether it is in hand or planned.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=4mm and 6mm,
+  box/.style={draw, rounded corners=1pt, align=center, font=\small,
+              inner sep=4pt, minimum height=9mm},
+  lab/.style={font=\scriptsize\itshape, text=black!60},
+  arr/.style={-{Latex[length=2mm]}, thick}
+]
+\node[box] (puzzle) {Rosetta puzzle\\ \scriptsize context pairs + question};
+\node[box, right=of puzzle] (llm) {Reasoning LLM\\ \scriptsize writes executable\\ \scriptsize mini-grammar};
+\node[box, right=of llm] (solver) {ASP checker\\ \scriptsize derives all pairs?\\ \scriptsize decodes question?};
+\node[box, right=of solver] (probe) {Localization\\ \scriptsize probes + patching\\ \scriptsize per certified rule};
+\draw[arr] (puzzle) -- (llm);
+\draw[arr] (llm) -- node[lab, above] {grammar} (solver);
+\draw[arr] (solver) -- node[lab, above] {rules} (probe);
+\draw[arr] (solver.south) to[out=-140,in=-40] node[lab, below] {counterexample (repair loop)} (llm.south);
+\end{tikzpicture}
+\caption{\textbf{The grammars-as-probes pipeline.} The LLM externalizes its
+analysis as an executable grammar; a solver certifies it against every context
+pair, feeding counterexamples back; each certified rule becomes a probe target
+inside the model, over solver-certified minimal pairs.}
+\label{fig:pipeline}
+\end{figure}
+
+\section{Background and related work}
+\label{sec:related}
+
+\paragraph{Linguistic olympiad puzzles as benchmarks.}
+LINGOLY \citep{lingoly} established that frontier LLMs struggle with
+olympiad-level linguistic reasoning (best model 38.7\% on hard puzzles);
+LINGOLY-TOO \citep{lingolytoo} showed via orthographic obfuscation that part
+of measured performance is memorization; related datasets include modeLing
+\citep{modeling} and analyses of where models break down
+\citep{unveiling,llmsolvegen}. These report accuracy, not mechanism. Notably,
+Rosetta puzzles are pattern-based in-context learning, a regime where CoT can
+\emph{hurt} \citep{curseofcot}---one motivation for asking what the verbalized
+analysis actually does.
+
+\paragraph{Program induction and hypothesis search.}
+Ellis et al.~\citep{ellis2022} synthesized theories for $\sim$70 textbook
+phonology problems with Bayesian program induction; hypothesis search with
+LLM-proposed, programmatically verified candidates helps on ARC-style
+induction \citep{wang2023hypothesis,errorsources}. We adopt the
+propose--verify loop but flip its purpose: the verified program is not (only)
+a way to answer the puzzle, it is the \emph{object of interpretability study}.
+Faithful-by-construction pipelines \citep{lyu2023,logiclm} guarantee that the
+emitted chain entails the answer; they do not ask whether the chain reflects
+the model's internal computation, which is our focus.
+
+\paragraph{CoT faithfulness and reasoning-model interpretability.}
+Trace-level probes---truncation, paraphrase, mistake injection---show CoT is
+often but not always load-bearing \citep{lanham2023,turpin2023}, and recent
+work argues much reasoning is latent rather than verbalized
+\citep{latentreasoning,thoughtology}. Feature-level studies of reasoning
+models are emerging: public sparse autoencoders (SAEs) exist for DeepSeek-R1
+and its distills \citep{goodfire2025,basesfeatures}, and SAE-plus-patching has
+been applied to CoT faithfulness on math/QA \citep{howdoescot}. We differ in
+having a certified symbolic statement of the knowledge whose representation is
+being tested, and we heed the caution that simple linear baselines often match
+SAEs \citep{axbench} by treating probes as primary and SAE features as a
+finer-grained lens.
+
+\section{Method}
+\label{sec:method}
+
+\subsection{Executable grammar format and certification}
+\label{sec:method-format}
+
+A grammar is a JSON/YAML document in a small language-agnostic schema covering
+the core of UKLO Rosetta phenomena: (i)~\emph{lexicon entries}---surface form,
+meaning atoms, feature values (e.g., \texttt{taian} $\mapsto$ definite
+article, \texttt{num=pl}); (ii)~\emph{concatenative word formation}---stems
+plus affixes with feature constraints; (iii)~\emph{agreement
+dependencies}---a feature of one constituent realized on another (e.g., verb
+suffix keyed by \emph{object} number); (iv)~\emph{precedence
+constraints}---a partial order over constituents (e.g., V $\prec$ O $\prec$ S).
+Nothing in the schema names a language; the same format, checker, and probing
+recipe apply to any puzzle in the corpus.
+
+The document compiles mechanically to ASP facts and rules; the checker is a
+fixed clingo \citep{clingo} program that tests \emph{derivability}: for every
+context pair, generation from the pair's semantic frame under the submitted
+grammar must produce exactly the attested sentence; the held-out question must
+decode to a unique reading. The checker returns one of three verdicts:
+\textbf{certified}; \textbf{counterexample} (the first failing pair, with
+expected vs.\ produced form); or \textbf{format error}. The checker only
+\emph{checks}---it is deliberately not an inducer---so certification is fast
+and its verdicts are easy to audit. Separately, an offline solver
+\emph{induction} mode enumerates all grammars consistent with the pairs, which
+we use as an oracle: it tells us whether the model's certified grammar is
+unique or one of several consistent alternatives, and flags puzzles whose
+context genuinely underdetermines the answer (\S\ref{sec:method-faithful}).
+
+\subsection{Extraction loop}
+\label{sec:method-loop}
+
+The model receives the puzzle (context pairs and question only) and the format
+specification, and must output a grammar document; it never sees solver
+internals. On a counterexample or format error, the verdict is fed back
+verbatim and the model revises, up to a fixed iteration and cost budget; every
+iteration is logged (prompt version, grammar, verdict). We run one frontier
+closed model, as an upper bound on extraction quality, and one open-weight
+reasoning model that we can subsequently probe. This yields our first research
+question, \textbf{RQ-1 (extraction)}: can current reasoning LLMs express their
+puzzle analysis in the format at all, how many repair iterations does
+certification take, and which linguistic phenomena resist externalization?
+
+\subsection{From certified rules to certified probe data}
+\label{sec:method-localize}
+
+A certified grammar decomposes into discrete rules $R_1,\dots,R_k$ (lexical
+entries, agreement dependencies, ordering constraints). For each rule $R$ we
+generate \emph{contrastive minimal pairs}: puzzle variants---a substituted
+context pair, or a question whose frame differs in exactly the feature $R$
+governs---such that only $R$'s applicability differs between the two sides,
+with both sides re-certified by the checker. Probe datasets are therefore
+generated and verified by the same machinery that verified the grammar,
+rather than hand-crafted.
+
+\textbf{RQ-2 (localization).} On the open-weight model solving the puzzle, we
+train layer-wise linear probes for rule-relevant variables (e.g.,
+$\texttt{obj\_num}=\texttt{pl}$) at informative token positions: the
+question-final token (where the full target frame must be available before
+emission---a lookahead test) and the answer token where the rule surfaces.
+Controls: probes on shuffled labels, and probe-subspace ablation compared to
+random-subspace ablation. We then run activation patching
+clean$\to$corrupt across the certified minimal pairs and measure whether the
+patched representation flips the answer token \emph{in the direction the
+symbolic grammar predicts}. Where public SAEs are available for the chosen
+backbone \citep{goodfire2025,llamascope}, we examine which features carry the
+probe signal, as a finer-grained (but optional) lens. We ask whether rule
+types stratify by depth---lexical lookup vs.\ agreement vs.\ ordering.
+
+\subsection{Rule-level faithfulness}
+\label{sec:method-faithful}
+
+For each certified rule $R$ we record three binary properties:
+\emph{written} ($R$ appears in the model's certified grammar---true by
+construction for extracted rules), \emph{decodable} (some layer's probe beats
+controls), and \emph{used} (patching along the probe direction changes the
+answer as the grammar predicts). \textbf{RQ-3 (faithfulness)}: do
+written-but-not-used rules exist---post-hoc symbolic rationalization---and
+conversely does patching flip answers exactly where the grammar says it
+should? We compare rules certified on the first attempt against rules that
+required repair, hypothesizing that repaired rules (adopted from solver
+counterexamples rather than the model's own analysis) are less likely to be
+internally used. \textbf{RQ-4 (calibration)}: on puzzles the induction oracle
+flags as underdetermined, the answer must come from priors rather than
+context; we predict weaker context-necessity and weaker rule decodability
+there. If probes and patching find \emph{no} crisp localization despite
+certified behavioral knowledge, that negative result is itself a finding
+about how symbolic-seeming competence is implemented.
+
+\section{Experimental setup}
+\label{sec:setup}
+
+\paragraph{Puzzles.} GPU probing depth is the constraint, so we study 2--3
+puzzles deeply rather than sweep a catalogue: UKLO 2023 Gilbertese (Round~1,
+Problem~3), plus Malay and Ndebele items chosen to be typologically distinct
+(VOS order and object agreement; negation-type realization; Bantu subject
+prefixes and infinitives). All three overlap a collaborator's frozen
+mechanistic-interpretability corpus, enabling direct reuse of their probing
+protocol and controls. As a format-leakage audit, the same schema must serve
+all three without language-specific extensions.
+
+\paragraph{Models.} Extraction: one frontier closed reasoning model and one
+open-weight reasoning model---DeepSeek-R1-Distill-Qwen-7B or
+R1-Distill-Llama-8B, the tie broken by SAE availability
+\citep{goodfire2025,llamascope}. Localization runs on the open-weight model.
+If the open model cannot produce certifiable grammars (the most likely failure
+mode), we fall back to probing it while it solves the puzzle directly, using
+the frontier model's certified grammar as ground truth; the localization story
+survives, and the self-externalization claim moves to future work.
+
+\paragraph{Protocol.} Extraction runs are logged as append-only JSONL with
+frozen model identifiers, versioned prompts, temperature~0, and a hard cost
+budget. Probing and patching run on single-GPU instances; activations are
+streamed to object storage. \TODO{final hyperparameters, exact prompt IDs,
+and compute footprint}
+
+\section{Preliminary results}
+\label{sec:prelim}
+
+\paragraph{The certification core works end-to-end on a real puzzle
+(in hand).} On UKLO 2023 Gilbertese, our ASP encoding---given only the 8
+context pairs and zero language-specific knowledge---jointly induces the
+grammar and decodes the held-out question \emph{E noorii taian uaa te aomata}
+as ``The man saw the fruits,'' matching the official mark scheme. The induced
+grammar matches the official commentary rule-for-rule
+(Table~\ref{tab:gilbertese}); the answer set is unique; every rival reading of
+the question (wrong number, tense, subject, or verb) is certified
+unsatisfiable when forced; and leave-one-out over the 8 context pairs yields
+8/8 unique correct decodes. This validates the checker semantics and gives us
+regression ground truth: the extraction pipeline's checker must certify a
+hand-translation of this induced grammar into the schema. It also previews
+RQ-4's machinery---enumerating consistent grammars is how we certify
+uniqueness or expose underdetermination.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Solver-induced grammar for UKLO 2023 Gilbertese} (unique
+answer set; matches the official commentary). Each row is a discrete rule and
+hence a future probe target.}
+\label{tab:gilbertese}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Rule type & Induced rule & Probe variable \\
+\midrule
+Constituent order & V $\prec$ O $\prec$ S & ordering \\
+Agreement & subject marker \emph{e}/\emph{a} $\leftarrow$ subject number & \texttt{subj\_num} \\
+Tense & \emph{na} future; $\varnothing$ past & \texttt{tense} \\
+Determiners & \emph{te} (sg) / \emph{taian} (pl) & \texttt{np\_num} \\
+Agreement & verb suffix \emph{-a}\,/\,\emph{-i} $\leftarrow$ \emph{object} number & \texttt{obj\_num} \\
+Lexicon & stems \emph{noori-} `see', \emph{kune-} `find', \dots & lexical id \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Extraction (RQ-1).} \PLANNED{Planned: certification rate and
+repair-iteration counts per model per puzzle, and a taxonomy of which
+phenomena fail to externalize.} \TODO{Table: model $\times$ puzzle $\times$
+\{certified?, iterations, failure mode\}}
+
+\paragraph{Localization (RQ-2).} \PLANNED{Planned: layer-wise probe accuracy
+profiles per rule with shuffled-label and random-subspace controls; patching
+effect sizes on certified minimal pairs; stratification by rule type.}
+\TODO{Figure: probe accuracy vs.\ layer, one panel per rule type}
+
+\paragraph{Faithfulness and calibration (RQ-3, RQ-4).} \PLANNED{Planned: the
+written/decodable/used contingency table over all certified rules;
+first-attempt vs.\ repaired rules; underdetermined vs.\ determined puzzles.}
+\TODO{Table: rule-level faithfulness outcomes}
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What kind of discovery this enables.} UKLO grammars describe known
+linguistics, so we claim a \emph{methodology} for certified knowledge
+extraction and localization, not novel linguistic discovery. The pattern,
+however, is general: whenever a domain admits an executable hypothesis format
+and a checker (program synthesis benchmarks, symbolic regression, reaction
+rules), the same loop turns a model's claimed knowledge into discrete,
+certified, individually probeable commitments. The solver here is measurement
+apparatus, not a competitor system: certification makes the extraction honest,
+and the induction oracle tells us when the data could not have determined the
+answer---exactly the cases where an expert should distrust a confident model.
+
+\paragraph{Limitations.} Depth over breadth: 2--3 puzzles cannot support
+claims about the distribution of faithfulness across phenomena; the schema
+covers concatenative morphology and consistent ordering, excluding (for now)
+fusional morphology, reduplication, and phonological alternation; probing the
+model while it \emph{writes} the grammar (the strongest version of the
+faithfulness claim) is harder than probing it while it solves, and we attempt
+it only on the subset that certifies cleanly; and rules that are real but
+distributed may defeat linear probes---which is why the patching arm, not
+probe accuracy alone, carries the causal claim. All quantitative RQ-1--RQ-4
+outcomes are pending and will be reported regardless of sign. \TODO{revisit after M3/M4; add ethics/licensing
+note (UKLO terms: free for educational use) if the checklist requires it}
+
+\clearpage  % page budget: main text above must fit 5 pages; refs/appendix don't count
+\typeout{MAIN-TEXT-ENDS-ON-PAGE: \thepage}
+\begingroup
+\small
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+\endgroup
+
+\appendix
+\section{Grammar schema (abridged)}
+\label{app:schema}
+\TODO{Include the JSON schema and the compiled ASP for one lexicon entry and
+one agreement rule, plus the fixed checker program.}
+
+\section{Extraction prompts and repair transcripts}
+\label{app:prompts}
+\TODO{Versioned prompt templates; one full repair transcript (grammar,
+counterexample, revision) per model.}
+
+\section{Probe and patching details}
+\label{app:probes}
+\TODO{Probe architecture, token positions, controls, patching methodology,
+SAE feature analysis details; compute footprint.}
+
+\end{document}
