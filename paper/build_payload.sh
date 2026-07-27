@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq --no-install-recommends \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-    texlive-fonts-recommended texlive-plain-generic >/dev/null
+    texlive-fonts-recommended texlive-plain-generic cm-super >/dev/null
 
 mkdir -p /tmp/build /tmp/output
 gsutil -q cp "gs://cot-rosetta-interp-data/scratch/paper_src/*" /tmp/build/
@@ -33,6 +33,10 @@ import re
 log = open("/tmp/build/main.log", errors="replace").read()
 m = re.findall(r"Output written on main\.pdf \((\d+) page", log)
 print(f"total_pages={m[-1] if m else 'unknown'}")
+e = re.findall(r"MAIN-TEXT-ENDS-ON-PAGE: (\d+)", log)
+if e:
+    # marker fires after \clearpage, i.e. on the references' first page
+    print(f"main_text_pages={int(e[-1]) - 1}")
 EOF
 fi
 echo "build_failed=$build_failed" >> /tmp/output/pagecount.txt || true
