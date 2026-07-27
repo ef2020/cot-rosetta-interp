@@ -37,8 +37,8 @@
 \newcommand{\TODO}[1]{\ifdraft\textcolor{red!70!black}{[TODO: #1]}\fi}
 \newcommand{\PLANNED}[1]{\textcolor{blue!60!black}{\emph{#1}}}
 
-\title{\bf Grammars as Probes: Solver-Certified Knowledge Extraction\\
-and Localization in Reasoning Models}
+\title{\bf Grammars as Probes: Solver-Certified\\
+Knowledge Extraction and Localization in Reasoning Models}
 
 \author{%
   Anonymous Author(s)\\   % de-anonymize per workshop policy before submission
@@ -143,11 +143,9 @@ contrastive minimal pairs, replacing hand-crafted probe datasets
 (iii)~A rule-level reformulation of CoT faithfulness---written vs.\ decodable
 vs.\ causally used---with concrete predictions that activation patching can
 falsify (\S\ref{sec:method-faithful}).
-(iv)~A validation of the certification core on UKLO 2023 Gilbertese, where the
-solver induces a unique grammar matching the official mark scheme and
-certifies every rival reading unsatisfiable (\S\ref{sec:prelim}), and a
-pre-registered experimental design on three UKLO puzzles with
-DeepSeek-R1-Distill models (\S\ref{sec:setup}).
+(iv)~Validation of the certification core on UKLO 2023 Gilbertese
+(\S\ref{sec:prelim}) and a pre-registered experimental design on three UKLO
+puzzles with DeepSeek-R1-Distill models (\S\ref{sec:setup}).
 \TODO{re-balance contribution list once localization results exist}
 
 This is work in progress: the certification machinery and study design are
@@ -368,7 +366,7 @@ Constituent order & V $\prec$ O $\prec$ S & ordering \\
 Agreement & subject marker \emph{e}/\emph{a} $\leftarrow$ subject number & \texttt{subj\_num} \\
 Tense & \emph{na} future; $\varnothing$ past & \texttt{tense} \\
 Determiners & \emph{te} (sg) / \emph{taian} (pl) & \texttt{np\_num} \\
-Agreement & verb suffix \emph{-a}/\emph{-i} $\leftarrow$ \emph{object} number & \texttt{obj\_num} \\
+Agreement & verb suffix \emph{-a}\,/\,\emph{-i} $\leftarrow$ \emph{object} number & \texttt{obj\_num} \\
 Lexicon & stems \emph{noori-} `see', \emph{kune-} `find', \dots & lexical id \\
 \bottomrule
 \end{tabular}
@@ -411,9 +409,8 @@ model while it \emph{writes} the grammar (the strongest version of the
 faithfulness claim) is harder than probing it while it solves, and we attempt
 it only on the subset that certifies cleanly; and rules that are real but
 distributed may defeat linear probes---which is why the patching arm, not
-probe accuracy alone, carries the causal claim. Results reported here are
-preliminary; all quantitative RQ-1--RQ-4 outcomes are pending and will be
-reported regardless of sign. \TODO{revisit after M3/M4; add ethics/licensing
+probe accuracy alone, carries the causal claim. All quantitative RQ-1--RQ-4
+outcomes are pending and will be reported regardless of sign. \TODO{revisit after M3/M4; add ethics/licensing
 note (UKLO terms: free for educational use) if the checklist requires it}
 
 \clearpage  % page budget: main text above must fit 5 pages; refs/appendix don't count
