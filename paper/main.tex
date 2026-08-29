@@ -121,16 +121,13 @@ prompt token---the field's default recipe---yields near-zero causal effect on
 these tasks, because rule features live at earlier morpheme positions
 (\S\ref{sec:results}).
 
-For this workshop's agenda, the domain is the point: UKLO grammars are
-\emph{known} linguistics, which is what lets us audit every step---the
-solver's certificate against the official solutions, and the localization
-claims against intervention outcomes. What transfers to domains without an
-answer key is the recipe: certify what the model's behavior commits it to (a
-program that provably reproduces the observed data), then use the certified
-components as probe targets to test which of them the model genuinely
-computes. That combination---external verification plus internal causal
-validation---is what makes extracted model knowledge a candidate for
-scientific discovery rather than a plausible story.
+The domain is the point for this workshop's agenda: UKLO grammars are
+\emph{known} linguistics, which lets us audit every step against the official
+solutions. What transfers to domains without an answer key is the recipe:
+certify what the model's behavior commits it to, then test which certified
+components the model genuinely computes. External verification plus internal
+causal validation is what makes extracted model knowledge a candidate for
+discovery rather than a plausible story.
 
 \section{Related work}
 \label{sec:related}
@@ -276,13 +273,12 @@ sites, 5{,}069 path-patching traces, and 32 dual-intervention runs.
 \label{sec:results}
 
 \textbf{The default recipe fails: last-token probing shows nothing.}
-Probing and patching only at the final prompt token with a single direction
----the standard reading-out recipe---produces near-zero causal effect on every
-certified rule (Appendix~\ref{app:lasttoken}). The rule features are computed
-at earlier morpheme positions rather than pooled at the prompt-final token.
-All positive results below required the full layer$\times$position sweep; we
-flag this as a caution for knowledge-extraction pipelines built on last-token
-probes.
+Probing and patching only at the final prompt token with a single
+direction---the standard reading-out recipe---produces near-zero causal effect
+on every certified rule (Appendix~\ref{app:lasttoken}): the rule features are
+computed at earlier morpheme positions, not pooled at the prompt-final token.
+Every positive result below required the full layer$\times$position sweep---a
+caution for extraction pipelines built on last-token probes.
 
 \textbf{Every certified rule localizes, and depth stratifies by rule type.}
 Across all 238{,}975 grid evaluations, every solver-certified rule exhibits
@@ -357,11 +353,10 @@ perfectly (Table~\ref{tab:composition}): order-KL divergence is
 $D_{\mathrm{KL}} \le 0.0001$ nats across all Ndebele Q1 rule pairs and
 $\le 0.0019$ nats across Tshiluba Q7/Q8 canonical pairs, and binary answer
 commutativity passes on 31/31 evaluated rule pairs. Sequential application
-also recovers the joint intervention. Pruned circuits achieve this at
-parsimony ratios below $1.4\times10^{-6}$ of the model's parameter capacity
-(Pareto analysis in Appendix~\ref{app:mdl}). Together these results are
-consistent with the model composing discrete grammatical rules as
-non-interfering, near-orthogonal linear operations on compact subcircuits.
+also recovers the joint intervention, at circuit parsimony ratios below
+$1.4\times10^{-6}$ of the model's parameter capacity (Pareto analysis in
+Appendix~\ref{app:mdl})---consistent with additive, non-interfering rule
+composition on compact subcircuits.
 
 \begin{table}[t]
 \centering
@@ -422,34 +417,30 @@ proof; wider rule inventories could yet reveal interference.
 \section{Conclusion}
 \label{sec:conclusion}
 
-We showed that solver-certified grammar rules---machine-verified statements of
-exactly the knowledge a Rosetta puzzle requires---can serve as probe targets
-that make knowledge extraction from a model's internals honest: on four UKLO
-questions, \texttt{Llama-3.1-8B} implements each certified rule in a
-depth-stratified, low-rank linear subspace, routes it through sparse attention
-circuits, and composes independent rules commutatively. The workshop's
-question is what models know that we don't; our contribution is procedural:
-when a domain admits an executable hypothesis format and a checker, the
-certify-then-localize loop turns "the model seems to know $X$" into a pair of
-auditable claims---$X$ provably accounts for the observed data, and the model
-causally computes $X$---which is the standard extracted knowledge should meet
-before an expert spends time testing it in domains where, unlike here, no
-answer key exists.
+Solver-certified grammar rules---machine-verified statements of exactly the
+knowledge a Rosetta puzzle requires---make knowledge extraction from a model's
+internals honest: on four UKLO questions, \texttt{Llama-3.1-8B} implements
+each certified rule in a depth-stratified, low-rank linear subspace, routes it
+through sparse attention circuits, and composes independent rules
+commutatively. Our contribution is procedural: wherever a domain admits an
+executable hypothesis format and a checker, the certify-then-localize loop
+turns ``the model seems to know $X$'' into two auditable claims---$X$ provably
+accounts for the observed data, and the model causally computes $X$---the
+standard extracted knowledge should meet before experts spend time testing it
+in domains where, unlike here, no answer key exists.
 
 \section*{Responsible-use statement}
 This work analyzes the internal mechanisms of a publicly released language
-model on educational linguistics puzzles; it introduces no new model, no
-generation capability, and no data about individuals. UKLO puzzle materials
-are used under their free-for-educational-use terms, and we credit the puzzle
-authors via the official sources cited. The principal societal risk we
-foresee is epistemic: knowledge-extraction pipelines can lend unearned
-authority to spurious "discoveries" read out of models. Our method is designed
-to mitigate exactly this failure mode---every extracted claim must be
-certified against data by a solver and causally validated in the model---and
-we report the failure of the standard last-token recipe so practitioners do
-not over-trust cheaper extraction methods. Interventions that steer model
-outputs (SubDAS) are rule-specific, puzzle-scoped, and of no plausible dual
-use beyond the interpretability setting studied here.
+model on educational linguistics puzzles; it introduces no new model or
+generation capability and no data about individuals. UKLO materials are used
+under their free-for-educational-use terms, with the puzzle sources credited.
+The principal societal risk we foresee is epistemic: knowledge-extraction
+pipelines can lend unearned authority to spurious ``discoveries'' read out of
+models. Our method targets exactly this failure mode---every extracted claim
+must be solver-certified against data and causally validated in the
+model---and we report the failure of the cheaper last-token recipe so
+practitioners do not over-trust it. SubDAS interventions are rule-specific
+and puzzle-scoped, with no plausible dual use beyond the setting studied.
 
 \begingroup
 \small
