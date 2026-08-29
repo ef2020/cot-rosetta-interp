@@ -1,22 +1,19 @@
-% References for "Grammars as Probes".
-% arXiv IDs taken from HANDOFF.md's literature map where recorded there.
-% Entries marked "VERIFY" have details (IDs, author lists, venues) that must be
-% checked against the actual papers before submission — the drafting sandbox
-% has no access to arxiv.org.
+% References for "Grammars as Probes" (workshop restructure).
+% Entries cross-checked against Semantic Scholar metadata where marked;
+% remaining "VERIFY" notes must be resolved before submission.
 
 @article{lingoly,
   title   = {{LINGOLY}: A Benchmark of Olympiad-Level Linguistic Reasoning Puzzles in Low-Resource and Extinct Languages},
-  author  = {Bean, Andrew M. and Hellsten, Simi and Mayne, Harry and Magomere, Jabez and Chi, Ethan A. and Chi, Ryan and Hale, Scott A. and Kirk, Hannah Rose},
+  author  = {Bean, Andrew M. and Hellsten, Simi and Mayne, Harry and Magomere, Jabez and Chi, Ethan A. and Chi, Ryan A. and Hale, Scott A. and Kirk, Hannah Rose},
   journal = {arXiv preprint arXiv:2406.06196},
   year    = {2024}
 }
 
 @article{lingolytoo,
-  title   = {{LINGOLY-TOO}: Disentangling Memorisation from Reasoning with Linguistic Templatisation and Orthographic Obfuscation},
-  author  = {Khouja, Jude and Korgul, Karolina and Hellsten, Simi and Yang, Lingyi and Neacsu, Vlad and Mayne, Harry and Kearns, Ryan and Bean, Andrew M. and Hale, Scott A.},
-  journal = {arXiv preprint},
-  year    = {2025},
-  note    = {VERIFY: author list and arXiv ID}
+  title   = {{LINGOLY-TOO}: Disentangling Reasoning from Knowledge with Templatised Orthographic Obfuscation},
+  author  = {Khouja, Jude and Yang, Lingyi and Korgul, Karolina and Hellsten, Simeon and Neac{\c{s}}u, Vlad and Mayne, Harry and Kearns, Ryan and Bean, Andrew M. and Mahdi, Adam},
+  journal = {arXiv preprint arXiv:2503.02972},
+  year    = {2025}
 }
 
 @inproceedings{bozhanov2013,
@@ -29,9 +26,8 @@
 @article{modeling,
   title   = {{modeLing}: A Novel Dataset for Testing Linguistic Reasoning in Language Models},
   author  = {Chi, Nathan A. and Malchev, Teodor and Kong, Riley and Chi, Ryan A. and Huang, Lucas and Chi, Ethan A. and McCoy, R. Thomas and Radev, Dragomir},
-  journal = {arXiv preprint},
-  year    = {2024},
-  note    = {VERIFY: author list and arXiv ID}
+  journal = {arXiv preprint arXiv:2406.17038},
+  year    = {2024}
 }
 
 @article{llmsolvegen,
@@ -43,34 +39,10 @@
 }
 
 @article{unveiling,
-  title   = {{unveiLing}: What Makes Linguistics Olympiad Puzzles Tricky for LLMs?},
-  author  = {{[Authors]}},
+  title   = {{UNVEILING}: What Makes Linguistics Olympiad Puzzles Tricky for LLMs?},
+  author  = {Choudhary, Mukund and Srivatsa, KV Aditya and Aeron, Gaurja and Bhattacharya, A. R. and Dinh, Dang Khoa Dang and Hanif, Ikhlasul Akmal and Kotova, Daria and Kochmar, Ekaterina and Choudhury, Monojit},
   journal = {arXiv preprint arXiv:2508.11260},
-  year    = {2025},
-  note    = {VERIFY: title and author list}
-}
-
-@article{curseofcot,
-  title   = {The Curse of {CoT}: On the Limitations of Chain-of-Thought in In-Context Learning},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2504.05081},
-  year    = {2025},
-  note    = {VERIFY: author list}
-}
-
-@article{wang2023hypothesis,
-  title   = {Hypothesis Search: Inductive Reasoning with Language Models},
-  author  = {Wang, Ruocheng and Zelikman, Eric and Poesia, Gabriel and Pu, Yewen and Haber, Nick and Goodman, Noah D.},
-  journal = {arXiv preprint arXiv:2309.05660},
-  year    = {2023}
-}
-
-@article{errorsources,
-  title   = {Analysis of Error Sources in {LLM}-based Hypothesis Search},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2509.01016},
-  year    = {2025},
-  note    = {VERIFY: title and author list}
+  year    = {2025}
 }
 
 @article{ellis2022,
@@ -79,6 +51,13 @@
   journal = {Nature Communications},
   volume  = {13},
   year    = {2022}
+}
+
+@article{wang2023hypothesis,
+  title   = {Hypothesis Search: Inductive Reasoning with Language Models},
+  author  = {Wang, Ruocheng and Zelikman, Eric and Poesia, Gabriel and Pu, Yewen and Haber, Nick and Goodman, Noah D.},
+  journal = {arXiv preprint arXiv:2309.05660},
+  year    = {2023}
 }
 
 @article{lyu2023,
@@ -109,67 +88,55 @@
   year    = {2023}
 }
 
-@article{howdoescot,
-  title   = {How does Chain of Thought Think? A Feature-Level Causal Study of {CoT} Faithfulness},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2507.22928},
-  year    = {2025},
-  note    = {VERIFY: title and author list}
+@article{meng2022rome,
+  title   = {Locating and Editing Factual Associations in {GPT}},
+  author  = {Meng, Kevin and Bau, David and Andonian, Alex and Belinkov, Yonatan},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {35},
+  year    = {2022}
 }
 
-@misc{goodfire2025,
-  title        = {Under the Hood of a Reasoning Model: Sparse Autoencoders for {DeepSeek-R1}},
-  author       = {{Goodfire}},
-  year         = {2025},
-  howpublished = {\url{https://www.goodfire.ai/blog/under-the-hood-of-a-reasoning-model}},
-  note         = {Model release: \url{https://huggingface.co/Goodfire/DeepSeek-R1-SAE-l37}}
+@article{wang2022ioi,
+  title   = {Interpretability in the Wild: A Circuit for Indirect Object Identification in {GPT-2} Small},
+  author  = {Wang, Kevin and Variengien, Alexandre and Conmy, Arthur and Shlegeris, Buck and Steinhardt, Jacob},
+  journal = {arXiv preprint arXiv:2211.00593},
+  year    = {2022}
 }
 
-@article{basesfeatures,
-  title   = {``{I} Have Covered All the Bases Here'': Interpreting Reasoning Features in Large Language Models via Sparse Autoencoders},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2503.18878},
-  year    = {2025},
-  note    = {VERIFY: author list}
+@article{goldowskydill2023,
+  title   = {Localizing Model Behavior with Path Patching},
+  author  = {Goldowsky-Dill, Nicholas and MacLeod, Chris and Sato, Lucas and Arora, Aryaman},
+  journal = {arXiv preprint arXiv:2304.05969},
+  year    = {2023}
 }
 
-@misc{llamascope,
-  title        = {{Llama Scope R1}: Sparse Autoencoders for {DeepSeek-R1-Distill-Llama-8B}},
-  author       = {{OpenMOSS Team}},
-  year         = {2025},
-  howpublished = {Neuronpedia release},
-  note         = {VERIFY: canonical citation form}
+@article{geiger2023das,
+  title   = {Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations},
+  author  = {Geiger, Atticus and Wu, Zhengxuan and Potts, Christopher and Icard, Thomas and Goodman, Noah D.},
+  journal = {arXiv preprint arXiv:2303.02536},
+  year    = {2023}
 }
 
-@article{axbench,
-  title   = {{AxBench}: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders},
-  author  = {Wu, Zhengxuan and others},
-  journal = {arXiv preprint},
-  year    = {2025},
-  note    = {VERIFY: author list and arXiv ID}
+@article{wu2023boundless,
+  title   = {Interpretability at Scale: Identifying Causal Mechanisms in {A}lpaca},
+  author  = {Wu, Zhengxuan and Geiger, Atticus and Icard, Thomas and Potts, Christopher and Goodman, Noah D.},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {36},
+  year    = {2023}
 }
 
-@article{thoughtology,
-  title   = {{DeepSeek-R1} Thoughtology: Let's \emph{think} about LLM Reasoning},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2504.07128},
-  year    = {2025},
-  note    = {VERIFY: author list}
+@article{llama3,
+  title   = {The {Llama} 3 Herd of Models},
+  author  = {Grattafiori, Aaron and others},
+  journal = {arXiv preprint arXiv:2407.21783},
+  year    = {2024}
 }
 
-@article{latentreasoning,
-  title   = {{LLM} Reasoning Is Latent, Not the Chain of Thought},
-  author  = {{[Authors]}},
-  journal = {arXiv preprint arXiv:2604.15726},
-  year    = {2026},
-  note    = {VERIFY: title and author list}
-}
-
-@article{deepseekr1,
-  title   = {{DeepSeek-R1}: Incentivizing Reasoning Capability in {LLMs} via Reinforcement Learning},
-  author  = {{DeepSeek-AI}},
-  journal = {arXiv preprint arXiv:2501.12948},
-  year    = {2025}
+@article{nnsight,
+  title   = {{NNsight} and {NDIF}: Democratizing Access to Open-Weight Foundation Model Internals},
+  author  = {Fiotto-Kaufman, Jaden and others},
+  journal = {arXiv preprint arXiv:2407.14561},
+  year    = {2024}
 }
 
 @inproceedings{clingo,

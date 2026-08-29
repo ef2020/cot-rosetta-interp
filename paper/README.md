@@ -1,53 +1,68 @@
-# Workshop paper draft — "Grammars as Probes"
+# Workshop paper — "Grammars as Probes"
 
-Draft for the **Interpretability for Scientific Discovery** workshop, NeurIPS 2026
-(https://interpretability4discovery.github.io/). Submission deadline **2026-08-29**;
-**5 pages main text** (references and appendices excluded, main text self-contained);
-non-archival. Source of truth for scope: `experiments/04_hypothesis_search/PROJECT_2.md`.
+Submission draft for the **Interpretability for Discovery** workshop, NeurIPS 2026
+(https://interpretability4discovery.github.io/). Deadline **extended to 2026-09-02,
+11:59 PM AoE** (site shows Aug 29 struck through). Up to **5 pages main text**,
+self-contained; references and appendices excluded; double-blind; non-archival;
+submission via OpenReview. A **responsible-use statement is required** (missing one
+is grounds for desk rejection) — included as an unnumbered section before the
+references.
+
+This version restructures the 2026-08 results draft (`NueurIPS2026.pdf`, shared as a
+PDF only) with the workshop's discovery framing: certified rule extraction +
+causal localization as a recipe for making extracted model knowledge trustworthy,
+validated in a domain with an answer key. Content (methods, numbers) is reconstructed
+from that PDF; framing, structure, and the main-text tables are new.
 
 ## Files
 
-- `main.tex` — the paper. Preamble approximates NeurIPS geometry/typography (10pt Times,
-  5.5in × 9in text block) so page counts are realistic; **swap in the official workshop
-  template before submission** (the sandbox cannot fetch it — egress-restricted).
-- `references.bib` — bibliography. Entries with `note = {VERIFY: ...}` have arXiv IDs or
-  author lists that must be checked against the actual papers before submission.
+- `main.tex` — the paper, on the **official NeurIPS 2026 template**
+  (`neurips_2026.sty`, `[dblblindworkshop]` mode) fetched from the CFP's linked kit.
+  For camera-ready: switch to `[dblblindworkshop,final]` and use the +1 page.
+- `neurips_2026.sty` — official style file (do not edit).
+- `references.bib` — bibliography; entries resolved against arXiv metadata where
+  possible (fetched via a GCE VM — arxiv.org is blocked from the sandbox).
+- `build_payload.sh`, `fetch_template_payload.sh` — cloud_runner payloads (compile /
+  fetch); see "Building".
 
-## Draft conventions
+## Red `[TODO:...]` marks = items only the full LaTeX source has
 
-- Red `[TODO: ...]` marks (via the `\TODO` macro) are results/details that do not exist yet.
-  Flip `\drafttrue` to `\draftfalse` in the preamble to hide them for a clean read.
-- Blue italic *Planned:* text (via `\PLANNED`) states what each pending results block will
-  contain, so section structure survives contact with real numbers.
-- §5 "Preliminary results" distinguishes **(in hand)** — the Gilbertese clingo spike
-  (`experiments/04_hypothesis_search/clingo_gilbertese/`) — from planned RQ-1…RQ-4 results
-  keyed to milestones M2–M4 in PROJECT_2.md.
+The uploaded PDF referenced Appendices B–K, Figures 9–11, and Tables 1–6 that were
+not in the file. The restructured draft keeps their slots (`\TODO` marks, appendix
+stubs) so they can be ported verbatim from the full source:
+
+- Figure 9 (layer×position CIE heatmaps) → main-text Figure 1 slot
+- Tables 4–5 (commutativity) → two missing cells in main-text Table 2
+- Appendices B–K → stubs at the end of `main.tex`
+- The hypothesis-space generation model name ("Claude 3.5 Opus" in the old draft is
+  not a released model — verify the exact identifier)
+
+Flip `\drafttrue` to `\draftfalse` to hide TODO marks for a clean read; all must be
+resolved before submission.
 
 ## Building
 
-No LaTeX in the sandbox. Either compile anywhere with TeX Live
-(`pdflatex main && bibtex main && pdflatex main && pdflatex main`), or use the
-cloud runner:
+No LaTeX in the sandbox; compile anywhere with TeX Live, or:
 
 ```bash
-gcloud storage cp paper/main.tex paper/references.bib \
+gcloud storage cp paper/main.tex paper/references.bib paper/neurips_2026.sty \
     gs://cot-rosetta-interp-data/scratch/paper_src/
-uv run python scripts/cloud_runner.py \
-    --bucket cot-rosetta-interp-data \
-    --machine-type e2-standard-2 \
-    --script paper/build_payload.sh \
+uv run python scripts/cloud_runner.py --bucket cot-rosetta-interp-data \
+    --machine-type e2-standard-2 --script paper/build_payload.sh \
     --fetch-output paper/build
 ```
 
-The compiled PDF lands in `paper/build/`. `results/`-style build artifacts are gitignored;
-commit only sources.
+The build log reports `main_text_pages=` for the 5-page budget check.
 
 ## Before submission checklist
 
-- [ ] Replace preamble with the official workshop/NeurIPS 2026 style file
-- [ ] De-anonymize or keep anonymous per the workshop's policy (check CFP)
-- [ ] Resolve every `VERIFY` note in `references.bib`
-- [ ] Fill RQ-1…RQ-4 results (M2–M4); delete or resolve every `\TODO`
-- [ ] Re-check the 5-page main-text limit after the real tables/figures land
-- [ ] Write the appendices (schema, prompts, probe details)
-- [ ] Decide on the public-artifact question (repo is private; reviewers weigh code availability)
+- [ ] Port appendices B–K, Figure 9/10/11, Tables 1–6 from the full LaTeX source
+- [ ] Resolve every red `\TODO` and any remaining `VERIFY` notes in `references.bib`
+- [ ] Verify the hypothesis-space model identifier
+- [ ] Anonymized code/data release (CFP: reviewers weigh reproducibility;
+      recommend anonymous.4open.science + anonymous HF) — resolves the
+      private-repo question from PROJECT_2.md M5
+- [ ] Double-blind pass: search PDF for author names / GitHub / HF usernames
+- [ ] Re-check the 5-page main-text limit after porting the real figure
+- [ ] OpenReview account ready well before the deadline (approval can take 2 weeks
+      without an institutional email)

@@ -67,3 +67,6 @@ Thumbs.db
 *.log
 scratch/
 tmp/
+
+# Paper build/fetch artifacts
+paper/fetched*/
