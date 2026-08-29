@@ -23,6 +23,17 @@ if [ "$build_failed" -eq 0 ]; then
     pdflatex -interaction=nonstopmode -halt-on-error main.tex || build_failed=1
 fi
 
+# Also build the clean (submittable, \draftfalse) variant to check the
+# page budget without the red TODO marks.
+sed 's/\\drafttrue/\\draftfalse/' main.tex > main_clean.tex
+if [ "$build_failed" -eq 0 ]; then
+    pdflatex -interaction=nonstopmode -halt-on-error main_clean.tex >/dev/null || true
+    bibtex main_clean >/dev/null || true
+    pdflatex -interaction=nonstopmode -halt-on-error main_clean.tex >/dev/null || true
+    pdflatex -interaction=nonstopmode -halt-on-error main_clean.tex >/dev/null || true
+    cp -f main_clean.pdf /tmp/output/ 2>/dev/null || true
+fi
+
 cp -f main.log /tmp/output/ 2>/dev/null || true
 cp -f main.blg /tmp/output/ 2>/dev/null || true
 if [ -f main.pdf ]; then

@@ -396,8 +396,7 @@ target logits in 80--100\% of runs. (3)~\emph{Global commutativity:} order-KL
 measured over the top-50 next-token distribution, not just the answer logit,
 stays $\le 0.0001$ nats. (4)~\emph{Multi-site interventions:} Bantu concords
 span prefix and stem positions; patching two sites simultaneously raises
-Tshiluba Q7 recovery from $\mathrm{CIE}=0.26$ to $0.48$, confirming the
-distributed-but-linear picture.
+Tshiluba Q7 recovery from $\mathrm{CIE}=0.26$ to $0.48$.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -410,9 +409,9 @@ $N=2$ counterfactual pairs, bounding SubDAS rank at $k\le2$ and limiting
 statistical power; results there are directional. Single-token answer
 evaluation sidesteps multi-token autoregressive generation. The grammar schema
 covers concatenative morphology and consistent ordering; fusional morphology,
-reduplication, and phonological alternation are future work. Finally, our
-evidence for additive composition is consistency across 31 rule pairs, not a
-proof; wider rule inventories could yet reveal interference.
+reduplication, and phonological alternation are future work. Our evidence for
+additive composition is consistency across 31 rule pairs, not a proof; wider
+rule inventories could reveal interference.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -422,12 +421,11 @@ knowledge a Rosetta puzzle requires---make knowledge extraction from a model's
 internals honest: on four UKLO questions, \texttt{Llama-3.1-8B} implements
 each certified rule in a depth-stratified, low-rank linear subspace, routes it
 through sparse attention circuits, and composes independent rules
-commutatively. Our contribution is procedural: wherever a domain admits an
-executable hypothesis format and a checker, the certify-then-localize loop
-turns ``the model seems to know $X$'' into two auditable claims---$X$ provably
-accounts for the observed data, and the model causally computes $X$---the
-standard extracted knowledge should meet before experts spend time testing it
-in domains where, unlike here, no answer key exists.
+commutatively. Wherever a domain admits an executable hypothesis format and a
+checker, the certify-then-localize loop turns ``the model seems to know $X$''
+into two auditable claims---$X$ provably accounts for the data, and the model
+causally computes it---the standard extracted knowledge should meet before
+experts test it in domains without an answer key.
 
 \section*{Responsible-use statement}
 This work analyzes the internal mechanisms of a publicly released language
