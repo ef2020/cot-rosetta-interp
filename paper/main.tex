@@ -80,9 +80,9 @@ way to read those regularities back out. But an extracted statement of model
 knowledge is only useful for discovery if it clears two bars. First,
 \emph{verification}: the statement must be checkable against data, not an
 artifact of the probing choices---in most interpretability work the
-experimenter picks the concept to probe (gender, sentiment, syntax) by
-intuition, with no independent guarantee that the chosen concept is the one
-the task requires. Second, \emph{internal validity}: the model must actually
+experimenter picks the probed concept (gender, sentiment, syntax) by
+intuition, with no guarantee it is the one the task requires.
+Second, \emph{internal validity}: the model must actually
 compute with the extracted knowledge; a statement that merely fits the model's
 outputs may be a post-hoc rationalization of a different
 mechanism~\citep{lanham2023,turpin2023}.
@@ -167,10 +167,8 @@ task's actual solution.
 \section{Solver-certified rule grounding}
 \label{sec:grounding}
 
-In interpretability practice, what to probe is usually left to human
-intuition, with no independent proof that the chosen concepts are the ones the
-task requires. We remove this degree of freedom with a symbolic solver. A
-grammar is defined in a small language-agnostic schema---a lexicon
+We remove the experimenter's choice of what to probe with a symbolic solver.
+A grammar is defined in a small language-agnostic schema---a lexicon
 (form\,$\leftrightarrow$\,meaning), concatenative morphology and agreement
 dependencies, and constituent-ordering constraints (Appendix~\ref{app:schema}).
 Given a puzzle's translated context pairs, compiled to ASP facts, the solver
@@ -315,11 +313,11 @@ Tshiluba Q8   & \texttt{subj\_lemma} & lemma selection & L31, P261 & 0.99 \\
 
 \begin{figure}[t]
 \centering
-\fbox{\parbox{0.9\linewidth}{\centering\vspace{2.2cm}
+\fbox{\parbox{0.9\linewidth}{\centering\vspace{0.9cm}
 \TODO{port Figure 9 from the full source: layer$\times$position
 $\mathrm{CIE}_{\mathrm{norm}}$ heatmaps, (a) early morphosyntactic vs.\
 (b) late lemma-selection rules}
-\vspace{2.2cm}}}
+\vspace{0.9cm}}}
 \caption{\textbf{Layer$\times$position causal maps for certified rules.}
 Morphosyntactic rules (a) peak in the earliest layers at morpheme positions;
 lemma selections (b) peak in late, output-adjacent layers.}
