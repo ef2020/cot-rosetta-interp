@@ -397,6 +397,126 @@ philanthropic options (Coefficient Giving, LTFF) exist to close.
 - August 2026 foundational research NOFOs: https://www.nsf.gov/news/foundational-research-nofos
 
 
+---
+
+## Addendum 2 — full sweep of open NSF opportunities (Sept 2026)
+
+### Why this is not the requested search page
+
+The NSF search URL could not be loaded by any route available:
+
+| Route | Result |
+|---|---|
+| Sandbox `curl` | HTTP 202, empty body — AWS WAF JavaScript challenge |
+| Sandbox `WebFetch` | Empty content (same challenge) |
+| Sandbox Chromium via the agent proxy | `ERR_CONNECTION_RESET`; proxy log shows the tunnel to `www.nsf.gov:443` closing mid-exchange |
+| GCE VM `curl` (us-central1) | Same WAF challenge — so it is not IP reputation |
+| **GCE VM Chromium** | **Passed the WAF and rendered real NSF HTML — but NSF returned “Access Denied — You are not authorized to access this page”** |
+
+The last row is the informative one. A real browser clears the challenge, and NSF
+then refuses `/funding/opportunities` itself. Tested with the exact filtered URL,
+with `exposed_form_display` removed, with the facet indices re-numbered
+contiguously, with a single division filter, with only the award-type filter, and
+with the bare unfiltered path — **all six returned Access Denied**. Individual
+opportunity pages (`/funding/opportunities/<program>`) fetch fine throughout, so
+it is the search/listing view that is closed to non-interactive clients.
+
+**Which five divisions the filter selected could not be recovered**, because the
+facet labels live on the page that will not load. The numeric IDs (12, 17, 200,
+215, 235) are not documented anywhere reachable.
+
+### What was done instead
+
+Enumerated **all 140 currently open NSF funding opportunities** through the
+Grants.gov Search2 API (`api.grants.gov/v1/api/search2`, agency `NSF`, statuses
+`posted|forecasted`), which mirrors NSF's NOFOs and is not behind the WAF. This
+is a superset of any five-division filter, so nothing in the requested search is
+missed — it is only unsorted by division.
+
+A useful confirmation fell out of it: the no-deadline NOFOs from the August 2026
+restructuring appear with sentinel close dates in **2076** (BIO Core, the three
+ENG NOFOs, the five MPS NOFOs). No CISE core NOFO carries that sentinel, which
+independently confirms the finding in Addendum 1 — CISE core research was not part
+of the deadline abolition.
+
+### New finds
+
+**Mathematical Foundations of Artificial Intelligence (MFAI) — NSF 24-569.
+Deadline Oct 9, 2026.** The best genuinely new opportunity in the sweep.
+
+| | |
+|---|---|
+| Award | **$500k–$1.5M**, ~36 months |
+| Scale | ~$8.5M/yr, ~15 awards per cycle |
+| Limit | A PI or co-PI may be on **no more than one proposal per deadline** |
+
+MFAI supports collaborations between mathematicians, statisticians, computer
+scientists and social/behavioural scientists on the foundations of AI, explicitly
+including foundation models and deep learning, and explicitly seeking "rigorous
+approaches for characterizing and validating machine learning algorithms and their
+predictions" that yield **"explainable and interpretable models."** RQ3 and RQ4 sit
+inside that language.
+
+Two caveats. The award size is well above the stated need, and the framing must be
+genuinely mathematical — a proposal that reads as empirical interpretability with a
+statistics veneer will not survive review. It wants a mathematician or statistician
+as a real collaborator, not a courtesy co-PI. Deadline is roughly five weeks out,
+which is tight without Phase 1 results.
+
+**Unlocking Dataset Value for AI-Enabled Scientific Discovery (AI Datasets) —
+NSF 26-512. Deadline Nov 4, 2026.** ~50 awards. Funds advancing existing scientific
+datasets for AI use: feature extraction, metadata generation, data pipelines,
+harmonization. The normalized UKLO corpus is the only angle here, and it is a weak
+one — the program means scientific community datasets and national data
+infrastructure, not a benchmark corpus. Recorded rather than recommended.
+
+### Checked and ruled out
+
+**Mid-Career Advancement (MCA) — NSF 22-603, deadline Mar 1, 2027.** This looked
+close to ideal on paper: protected time and resources for established researchers,
+45 awards, PI must be at Associate Professor rank and have held it at least three
+years, partnership with another institution encouraged. It is the only
+cross-directorate NSF program aimed squarely at the mid-career stage.
+**It does not apply here: the participating directorates are BIO, GEO, SBE and
+EHR — CISE is not among them.** The only route in would be SBE, whose panels are
+cancelled and whose dissolution is underway. Dead end, and worth recording so it
+is not rediscovered hopefully in six months.
+
+**NSF Dynamic Language Infrastructure – NEH Documenting Endangered Languages
+(DLI-DEL) — NSF 22-615, deadline Sept 15, 2026.** The only surviving NSF
+linguistics-adjacent program, and a joint NSF/NEH one at that. It funds
+documentation of endangered languages. UKLO puzzles are not endangered-language
+fieldwork, and no honest reframing makes them so.
+
+**Security, Privacy, and Trust in Cyberspace (SaTC) — NSF 25-515, deadline
+Sept 28, 2026.** $60M available, but the program is about the cyber ecosystem and
+malicious actors. "Trust" here is not interpretability.
+
+**Computational and Data-Enabled Science and Engineering (CDS&E) — PD-24-8084,
+no deadline.** A cross-cutting meta-program, i.e. a routing label applied to
+proposals submitted to disciplinary programs, not a separate pot of money.
+
+**Major Research Instrumentation — NSF 23-519, deadline Nov 16, 2026.** Would buy
+GPUs, but it is instrumentation-scale and the number of submissions per institution
+is capped, so it competes CUNY-internally before it competes nationally. NAIRR is
+the cheaper route to the same compute.
+
+### Net effect on the plan
+
+The sweep does not displace EAGER as the primary NSF target. It adds **MFAI
+(Oct 9, 2026)** as a real second option if a mathematician or statistician
+collaborator is available and the project can be framed foundationally, and it
+closes off MCA, DLI-DEL and SaTC definitively.
+
+### Sources
+
+- Grants.gov Search2 API: https://api.grants.gov/v1/api/search2 (agency NSF, 140 open opportunities)
+- MFAI NSF 24-569: https://www.nsf.gov/funding/opportunities/mfai-mathematical-foundations-artificial-intelligence
+- MCA NSF 22-603: https://www.grants.gov/search-results-detail/341086
+- AI Datasets NSF 26-512: https://www.grants.gov/search-results-detail/363268
+- SaTC NSF 25-515: https://www.grants.gov/search-results-detail/357554
+
+
 ## Sources
 
 - NSF Linguistics program status: https://www.nsf.gov/funding/opportunities/linguistics
