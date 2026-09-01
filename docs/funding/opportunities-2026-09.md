@@ -267,6 +267,112 @@ Everything above it is upside.
 
 ---
 
+---
+
+## Addendum — NSF CISE / IIS, checked in detail
+
+The Division of Information and Intelligent Systems (IIS) is where this project's
+NSF home would be. Its three core programs are **Robust Intelligence (RI)**,
+**Human-Centered Computing (HCC)**, and **Information Integration and Informatics
+(III)**. All three now sit under one solicitation.
+
+### Live and relevant
+
+**Future CoRe — NSF 25-543.** The only CISE core-research home, covering RI, HCC and
+III together.
+
+| | |
+|---|---|
+| Target dates | **Sept 10, 2026** (2nd Thu in Sept) and **Feb 4, 2027** (1st Thu in Feb) |
+| Deadline policy | Proposals **accepted anytime**; target dates decide which panel cycle reviews you |
+| Award | Up to **$1,000,000** over up to 4 years; typical $150k–250k/yr; >$300k in one year discouraged |
+| Scale | ~$280M, 400–600 awards |
+| PI eligibility | **No restrictions or limits** |
+| Proposal cap | **Max 2 proposals per rolling 12 months** as PI, co-PI, or senior/key personnel across *all* Future CoRe programs. Over the limit is returned without review — "no exceptions will be made" |
+
+**Robust Intelligence is the right program of the three.** It covers machine learning,
+human language technologies, and computational reasoning — RQ3 and RQ4 fit its scope
+without reframing. HCC is about how humans work and learn with computing systems; III
+is about the data lifecycle. Neither describes this work.
+
+The 2-proposal cap is the operational constraint: it is charged per *person*, not per
+proposal, and counts co-PI and senior-personnel roles. Check it before agreeing to
+join anyone else's Future CoRe submission.
+
+**EAGER, routed through an IIS program officer.** Up to $400k, no deadline, reviewed
+internally rather than by panel. Still the best NSF route for a first-time PI. Contact
+cise-ri@nsf.gov with a concept outline.
+
+**NSF GRFP — deadline Oct 20, 2026 for CISE** (the field-specific window runs Oct 19–23).
+This is *the student applying, not the PI*. If the PhD student is a US citizen, national,
+or permanent resident and is either pre-enrollment or under one academic year into their
+first graduate degree, GRFP pays a ~$37,000 annual stipend and removes the single largest
+line item from every other proposal on this page. Linguistics and Computer Science are
+both eligible fields. Anyone holding a prior master's, doctoral or terminal degree is
+ineligible.
+
+**Genesis Mission DCL — NSF 26-023**, published July 22, 2026. Not a separate pot of
+money: it directs proposers to submit through existing opportunities using a
+`Genesis Mission:` title prefix, for AI-enabled scientific discovery. Treat it as a
+framing device for a Future CoRe or EAGER submission, not as an opportunity in itself.
+
+### Corrections to the main scan — two instruments I expected to find are gone
+
+**CRII (CISE Research Initiation Initiative, NSF 23-576) is archived.** This would have
+been close to purpose-built: $175,000 over 24 months, restricted to PIs who have
+*never* held federal funding in a PI role, and limited to non-R1 institutions. It is
+no longer accepting proposals. Worth noting that even when live, its other criteria —
+untenured, within the first three years of a primary academic position, no more than
+six years past the PhD — would have excluded any PI who is not junior. "No funding
+history" and "early career" are not the same eligibility test, and CRII tested both.
+
+**CISE-MSI Research Expansion (NSF 24-536) is archived.** This was the minority-serving
+institution route, which many CUNY campuses would have qualified for as HSIs. Combined
+with NEH's cancellation of Awards for Faculty at HSIs, *both* of the MSI-status
+advantages a CUNY PI could have claimed are now closed.
+
+**CAREER** last closed July 22, 2026; next cycle ~July 2027, and it is restricted to
+untenured tenure-track assistant professors.
+
+### One trap to avoid
+
+On **Aug 17, 2026** NSF announced 12 new NOFOs worth >$1.5B and abolished deadlines
+for them — proposals accepted anytime. This has been widely reported as NSF deleting
+its deadlines. **It does not apply to CISE core research.** That batch covered BIO,
+ENG, GEO and all five MPS divisions; CISE's single entry in it was *Expeditions in
+Computing*, not a core NOFO. CISE core research still runs through Future CoRe on its
+September and February target dates. Do not plan around a deadline change that did not
+happen here.
+
+### Out of scope, recorded so it is not re-checked
+
+- **Expeditions in Computing (NSF 26-525)** — required preliminary proposal Dec 2, 2026;
+  full proposal by invitation only, July 27, 2027. $15M over 7 years, 2–4 awards per
+  competition, one proposal per person. Two orders of magnitude above this budget.
+- **State and Regional AI Infrastructure Hubs (NSF 26-513)** — Nov 4, 2026. Infrastructure
+  build-out, not investigator-led research.
+
+### Revised NSF plan
+
+1. **Now** — student applies to **GRFP** by Oct 20, 2026, if eligible. Highest-value
+   single action available, and the deadline is close.
+2. **After Phase 1 results exist** — concept outline to a Robust Intelligence program
+   officer for an **EAGER**, optionally under the Genesis Mission prefix.
+3. **Feb 4, 2027** — **Future CoRe / Robust Intelligence** full proposal, with an
+   experienced co-PI, built on Phase 1–2 data. Watch the 2-proposal cap.
+
+### Additional sources
+
+- NSF CISE IIS: https://www.nsf.gov/cise/iis/overview
+- Future CoRe solicitation NSF 25-543: https://www.nsf.gov/funding/opportunities/future-core-computer-information-science-engineering-future-computing/nsf25-543/solicitation
+- CRII (archived): https://www.nsf.gov/funding/opportunities/crii-computer-information-science-engineering-research-initiation
+- CISE-MSI (archived): https://www.nsf.gov/funding/opportunities/cise-msi-computer-information-science-engineering-research-expansion
+- Expeditions in Computing NSF 26-525: https://www.nsf.gov/funding/opportunities/expeditions-expeditions-computing/nsf26-525/solicitation
+- GRFP NSF 26-526: https://www.nsf.gov/funding/opportunities/grfp-nsf-graduate-research-fellowship-program/nsf26-526/solicitation
+- Genesis Mission DCL: https://www.nsf.gov/funding/information/dcl-unleashing-new-age-ai-enabled-scientific-discovery-through
+- August 2026 foundational research NOFOs: https://www.nsf.gov/news/foundational-research-nofos
+
+
 ## Sources
 
 - NSF Linguistics program status: https://www.nsf.gov/funding/opportunities/linguistics
