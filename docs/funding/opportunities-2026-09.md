@@ -299,17 +299,25 @@ The 2-proposal cap is the operational constraint: it is charged per *person*, no
 proposal, and counts co-PI and senior-personnel roles. Check it before agreeing to
 join anyone else's Future CoRe submission.
 
-**EAGER, routed through an IIS program officer.** Up to $400k, no deadline, reviewed
-internally rather than by panel. Still the best NSF route for a first-time PI. Contact
-cise-ri@nsf.gov with a concept outline.
+**EAGER, routed through an IIS program officer — the primary NSF target.** Up to
+$400k, no deadline, reviewed internally by NSF rather than by panel. The PI applies;
+no career-stage restriction, so a tenured PI is fully eligible. Contact cise-ri@nsf.gov
+with a concept outline.
 
-**NSF GRFP — deadline Oct 20, 2026 for CISE** (the field-specific window runs Oct 19–23).
-This is *the student applying, not the PI*. If the PhD student is a US citizen, national,
-or permanent resident and is either pre-enrollment or under one academic year into their
-first graduate degree, GRFP pays a ~$37,000 annual stipend and removes the single largest
-line item from every other proposal on this page. Linguistics and Computer Science are
-both eligible fields. Anyone holding a prior master's, doctoral or terminal degree is
-ineligible.
+Two things make EAGER the right instrument here rather than a fallback. It is the only
+NSF mechanism that will comfortably fund an ask this size — NSF has no small-grant
+program, and Future CoRe's floor behaviour is a multi-year project budget. And because
+it bypasses panel review, the "no prior funded proposals" problem largely evaporates:
+the decision rests with a program officer you have talked to, not with reviewers scoring
+a track record. A request in the $150k–250k range over two years covers a GRA line,
+travel, and hardware without straining a program officer's discretionary budget.
+
+**NSF GRFP — ruled out by decision, not by eligibility.** The fellowship (deadline
+Oct 20, 2026 for CISE) would pay the student a ~$37,000 stipend, but the *student*
+is the applicant and carries the writing burden. The PI has decided not to place that
+burden on the student, so GRFP is off this plan. The consequence is that the student
+stipend has to come out of grant funds the PI wins directly — which raises the minimum
+useful award and makes EAGER, rather than PSC-CUNY alone, the load-bearing target.
 
 **Genesis Mission DCL — NSF 26-023**, published July 22, 2026. Not a separate pot of
 money: it directs proposers to submit through existing opportunities using a
@@ -331,8 +339,11 @@ institution route, which many CUNY campuses would have qualified for as HSIs. Co
 with NEH's cancellation of Awards for Faculty at HSIs, *both* of the MSI-status
 advantages a CUNY PI could have claimed are now closed.
 
-**CAREER** last closed July 22, 2026; next cycle ~July 2027, and it is restricted to
-untenured tenure-track assistant professors.
+**CAREER is out.** It is restricted to untenured tenure-track assistant professors,
+and this PI is tenured. (Last closed July 22, 2026; next cycle ~July 2027.) Note that
+tenure also independently disqualified CRII, so no early-career instrument at NSF is
+available on this project — every remaining NSF route is an open competition or a
+program-officer decision.
 
 ### One trap to avoid
 
@@ -352,14 +363,27 @@ happen here.
 - **State and Regional AI Infrastructure Hubs (NSF 26-513)** — Nov 4, 2026. Infrastructure
   build-out, not investigator-led research.
 
-### Revised NSF plan
+### Revised NSF plan — PI-obtained awards only
 
-1. **Now** — student applies to **GRFP** by Oct 20, 2026, if eligible. Highest-value
-   single action available, and the deadline is close.
-2. **After Phase 1 results exist** — concept outline to a Robust Intelligence program
-   officer for an **EAGER**, optionally under the Genesis Mission prefix.
-3. **Feb 4, 2027** — **Future CoRe / Robust Intelligence** full proposal, with an
-   experienced co-PI, built on Phase 1–2 data. Watch the 2-proposal cap.
+Constraints that shaped this: the PI is **tenured** (no CAREER, no CRII), and the
+student will **not** be asked to apply for their own funding (no GRFP). Every item
+below is something the PI submits.
+
+1. **Now** — open the conversation with a **Robust Intelligence program officer**
+   (cise-ri@nsf.gov). Not a proposal yet: a short email describing the project and
+   asking whether it fits RI, and whether an EAGER concept outline would be welcome.
+   This costs nothing, and it is the step that most changes the odds on everything
+   after it.
+2. **After Phase 1 results exist** — submit the **EAGER** concept outline, optionally
+   under the `Genesis Mission:` prefix. Ask for $150k–250k over two years. This is
+   the realistic NSF award for this project.
+3. **Feb 4, 2027** — **Future CoRe / Robust Intelligence**, only if Phase 1–2 data is
+   strong and an experienced co-PI is on board. Watch the 2-proposal cap.
+
+Note what is *not* here: there is no NSF instrument sized at $15k–60k for a tenured PI.
+NSF's floor for this project is EAGER. The genuinely small money stays with PSC-CUNY
+and the CUNY IRG, and the student-stipend gap between them and EAGER is what the
+philanthropic options (Coefficient Giving, LTFF) exist to close.
 
 ### Additional sources
 
