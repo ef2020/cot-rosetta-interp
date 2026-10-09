@@ -1,0 +1,31 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Linguistic puzzles.} Olympiad puzzles probe rule induction from
+small evidence sets \citep{lingoly,modeling,unveiling,majmudar2025};
+obfuscation studies show part of measured performance is memorization
+\citep{lingolytoo}. These works characterize behavior; we test whether the
+inferred rules correspond to internal computation.
+
+\paragraph{Program induction and verified reasoning.} Solvers have been
+used to synthesize linguistic theories \citep{ellis2022} and to verify
+LLM-proposed hypotheses or reasoning
+\citep{wang2023hypothesis,parab2025,lyu2023,pan2023,olausson2023,ye2023}.
+We repurpose verification: the certified program is not a way to produce an
+answer but the specification of interpretability hypotheses.
+
+\paragraph{Causal interpretability.} Probing establishes decodability but
+not causal use \citep{conneau2018,hewitt2019,elazar2021,belinkov2022};
+activation patching \citep{vig2020,meng2022,zhang2024} and DAS
+\citep{geiger2021,geiger2024das,wu2023boundless,geiger2025} localize causal
+variables, with path patching extending to circuits
+\citep{wang2022ioi,goldowskydill2023,conmy2023}. The low-rank orthonormal
+subspace parameterization we use is standard practice in this line, as
+implemented in pyvene \citep{wu2024pyvene} and used by ReFT
+\citep{wu2024reft} and AxBench \citep{wu2025axbench}. All of these methods
+presuppose a known target variable; our targets come from task
+certificates. Composition of features and interventions has been studied
+via steering and feature geometry
+\citep{turner2023,rimsky2024,merullo2024,bricken2023,huben2024,park2024};
+certified rules let us test composition against operations the task
+provably requires.

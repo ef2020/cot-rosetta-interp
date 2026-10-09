@@ -1,0 +1,89 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Hypothesis generation}
+\label{sec:results-generation}
+
+\TODO{This subsection reports the generation-side experiments now in
+progress; placeholders below state what each number is. (a) Certification
+rate and repair-iteration counts per proposer model (Claude 5 Opus vs.\ an
+open-weight proposer), with a taxonomy of solver counterexamples. (b)
+Uniqueness: for each question, whether the certified rule set is unique
+among all consistent rule sets (solver induction mode) or one of $m$
+alternatives; underdetermined items flagged. (c) Hypothesis-space
+ablation: a generic schema-only space vs.\ the LLM-proposed space ---
+does proposer quality change which rules certify?}
+
+\subsection{Causal validation}
+\label{sec:results-validation}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}llrl@{}}
+\toprule
+Question & Rule & $|\mathrm{CIE}|$ & Site \\
+\midrule
+Gilb.\ Q3 & \texttt{tense}       & 3.39  & L00, P001 \\
+          & \texttt{obj\_lemma}  & 0.98  & L30, P195 \\
+Ndeb.\ Q1 & \texttt{yes}         & 1.20  & L03, P003 \\
+          & \texttt{verb}        & 1.00  & L29, P299 \\
+Tshi.\ Q7 & \texttt{tense}       & 24.00 & L00, P253 \\
+          & \texttt{verb}        & 1.04  & L20, P263 \\
+Tshi.\ Q8 & \texttt{obj\_small}  & 2.54  & L01, P000 \\
+          & \texttt{subj\_lemma} & 0.99  & L31, P261 \\
+\bottomrule
+\end{tabular}
+\caption{Peak causal sites for representative rules (full sweep in
+Appendix~\ref{app:sweeps}). In each question, morphosyntactic rules (first
+row) peak in early layers; lemma selection (second row) peaks near the
+output.}
+\label{tab:localization}
+\end{table}
+
+\begin{figure}[t]
+\centering
+% Drop the layer x position CIE heatmap panel here (early morphosyntactic
+% rule vs. late lemma rule), e.g. from the workshop version's Fig. 10:
+% \includegraphics[width=\columnwidth]{figures/heatmaps.pdf}
+\fbox{\parbox{0.93\columnwidth}{\centering\vspace{1.0cm}
+\TODO{port layer$\times$position $\mathrm{CIE}$ heatmaps (early
+morphosyntax vs.\ late lemma) from the workshop version}
+\vspace{1.0cm}}}
+\caption{Layer$\times$position causal maps for two certified rules of the
+same puzzle: morphosyntax localizes early, lemma selection late.}
+\label{fig:heatmaps}
+\end{figure}
+
+\paragraph{Depth stratification.} Across all 238{,}975 grid evaluations,
+every certified rule exhibits localized causal hotspots, with a consistent
+pattern across the three languages (Table~\ref{tab:localization},
+Figure~\ref{fig:heatmaps}): tense, agreement, and polarity markers peak in
+layers L0--L4 at morpheme positions, while noun and verb lemma selection
+consolidates in output-adjacent layers (L20--L31).
+
+\paragraph{Decodable $\neq$ used.} Linear probes at the final prompt token
+recover every certified rule almost perfectly ($\approx$100\% best-layer
+accuracy, with selectivity controls), yet one-dimensional patches at that
+token yield near-zero causal effect ($|\mathrm{CIE}|<0.05$;
+Appendix~\ref{app:lasttoken}). Rule information is computed and used at
+earlier morpheme positions---a caution for pipelines that read knowledge
+off the last token.
+
+\paragraph{Low-rank causal control.} Subspace interventions concentrate
+each rule's effect in a compact basis: rank 8 recovers
+$\mathrm{CIE}=0.575$ for Gilbertese \texttt{tense}; rank 2 reaches
+$0.50$ (Ndebele \texttt{part}) and $0.76$ (Tshiluba \texttt{subj\_num});
+remaining rules show stable effects in $[0.29,0.45]$ at ranks $\le 2$
+(Appendix~\ref{app:subspace}). Pruned circuits from path patching retain
+mean $|\mathrm{CIE}|$ of 0.77--1.04 while removing over 85\% of candidate
+edges (Appendix~\ref{app:circuits}).
+
+\paragraph{Independent rules compose.} Sequential interventions on
+independent rule pairs commute on 31/31 pair--site evaluations (16 rule
+pairs; max order-KL $\le 0.0118$ nats) and recover the corresponding joint
+interventions (Appendix~\ref{app:commutativity}). Controls: linear
+subspaces match or beat 2-layer MLP surrogates at 53.5--79.2\% of sites;
+random bases have no effect ($|\mathrm{CIE}|<0.01$); commutativity holds
+over the top-50 output tokens ($D_{\mathrm{KL}} \le 0.024$ nats), not just
+the answer logits.

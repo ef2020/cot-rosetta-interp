@@ -1,0 +1,88 @@
+% =============================================================================
+% From Verified Hypotheses to Model Mechanisms — NAACL 2027 SHORT PAPER
+% Template: official ACL style (acl.sty, acl_natbib.bst), as in the Overleaf
+% "Association for Computational Linguistics ACL Conference" template.
+%
+% Layout: main.tex holds ONLY the preamble, title/authors, and the abstract.
+% Every section lives in sections/*.tex and is pulled in via \input.
+%
+% Short-paper budget: 4 pages main text (Intro..Conclusion). Limitations,
+% Ethics, references, and appendices do NOT count toward the limit.
+% Red [TODO: ...] marks = pending experiments or material to port from the
+% workshop version's source; flip \drafttrue -> \draftfalse to hide them.
+% =============================================================================
+\documentclass[11pt]{article}
+
+% Change "review" to "final" for camera-ready, "preprint" for arXiv.
+\usepackage[review]{acl}
+
+% Standard ACL template packages
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+
+% Paper-specific packages
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+% Draft machinery: red TODO marks for pending results / material to port.
+\newif\ifdraft\drafttrue
+\newcommand{\TODO}[1]{\ifdraft\textcolor{red!70!black}{[TODO: #1]}\fi}
+
+\title{From Verified Hypotheses to Model Mechanisms:\\
+Grounding Interpretability-Based Discovery}
+
+% Anonymized automatically by the [review] option; fill in for camera-ready.
+\author{First Author \\
+  Affiliation \\
+  \texttt{email@domain} \\\And
+  Second Author \\
+  Affiliation \\
+  \texttt{email@domain} \\}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Causal interpretability methods such as activation patching and distributed
+alignment search validate hypotheses about model mechanisms, but the
+hypotheses themselves are usually supplied by researcher intuition. We study
+a setting where hypothesis generation can be made independent and
+verifiable. In linguistic Rosetta Stone puzzles, a model must infer an
+unknown grammar from translation pairs and apply it to new sentences; an
+Answer Set Programming solver derives and \emph{certifies} the minimal
+grammatical rules each puzzle requires, and each certified rule becomes a
+causal hypothesis about the model's internals---selected by the task, not by
+the analyst. Using standard interventions on \texttt{Llama-3.1-8B} across 29
+certified rules from four questions in three languages, we find that
+morphosyntactic rules localize in early layers while semantic lemma
+selection resolves near the output; that rank-$\le$8 linear subspaces
+suffice for causal control of individual rules; and that interventions on
+independent rules largely commute, consistent with additive composition.
+Linear probes recover every rule at the final token, yet interventions there
+have near-zero causal effect---a caution for last-token readout pipelines.
+\TODO{add one sentence of hypothesis-generation statistics (certification
+rates, repair iterations) once the extraction experiments complete}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_generation}
+\input{sections/04_validation}
+\input{sections/05_results}
+\input{sections/06_conclusion}
+\input{sections/07_limitations}
+\input{sections/08_ethics}
+
+\bibliography{custom}
+
+\appendix
+\input{sections/99_appendix}
+
+\end{document}

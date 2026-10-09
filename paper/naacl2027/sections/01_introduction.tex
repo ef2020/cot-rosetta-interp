@@ -1,0 +1,57 @@
+\section{Introduction}
+\label{sec:intro}
+
+Mechanistic interpretability has a mature toolbox for \emph{validating}
+hypotheses about model internals: activation patching quantifies where
+information is causally used \citep{vig2020,meng2022,zhang2024}, and
+distributed alignment search (DAS) tests whether a proposed causal variable
+is implemented in a linear subspace \citep{geiger2024das,wu2023boundless}.
+What these methods do not provide is the hypothesis itself. In practice the
+analyst chooses a concept---gender, sentiment, a high-level algorithm---and
+constructs contrastive data by hand, with no independent guarantee that the
+chosen concept is the one the task actually requires
+\citep{hase2023,lanham2023}. Validation is rigorous; generation is
+intuition.
+
+We study a setting where generation can be made independent and verifiable.
+Rosetta Stone puzzles from the UK Linguistics Olympiad (UKLO) present a
+small set of translation pairs in an unfamiliar language---for example,
+Gilbertese \emph{E nooria te uaa te aomata} `The man saw the fruit'---and
+ask for translations of held-out sentences \citep{bozhanov2013,lingoly}.
+The puzzles are self-contained: every rule needed to answer is inferable
+from the given pairs. This yields built-in verification. We use an Answer
+Set Programming (ASP) solver \citep{gelfond1988,gebser2014} to derive a
+minimal set of grammatical rules that provably regenerates every context
+pair and uniquely translates the target question. Each \emph{certified}
+rule (an object-agreement suffix, a tense particle, a noun-class concord)
+is a discrete, machine-verified hypothesis about what a model solving the
+puzzle must compute---selected by the task structure, not by the analyst,
+and converted automatically into counterfactual minimal pairs for causal
+testing.
+
+We apply this framework to \texttt{Llama-3.1-8B} on four questions from
+three typologically distinct languages (Gilbertese, Ndebele, Tshiluba),
+yielding 29 certified rules. Our contributions:
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=2pt]
+  \item A framework for \textbf{certified hypothesis generation}: causal
+  variables derived from task structure and verified by a solver,
+  decoupling hypothesis generation from both researcher intuition and the
+  model under study (\S\ref{sec:generation}).
+  \item A quantitative characterization of the generation pipeline itself:
+  certification rates, repair-loop dynamics, and uniqueness of the
+  certified grammars. \TODO{pending extraction experiments; see
+  \S\ref{sec:results-generation}}
+  \item \textbf{Causal validation} using standard interventions
+  (\S\ref{sec:validation}): rule implementations stratify by
+  depth---morphosyntax early (L0--L4), lemma selection near the output
+  (L20--L31); individual rules admit causally sufficient linear subspaces
+  of rank $\le 8$; interventions on independent rules commute (100\% of 16
+  rule pairs); and a dissociation---every rule is linearly decodable at the
+  final token, where interventions nonetheless have near-zero causal
+  effect (\S\ref{sec:results-validation}).
+\end{enumerate}
+
+We use only off-the-shelf validation machinery and claim no novelty there;
+the contribution is the provenance and verifiability of the hypotheses, and
+the resulting evidence about how in-context grammatical rules are
+implemented.

@@ -1,0 +1,19 @@
+\section*{Limitations}
+\label{sec:limitations}
+
+Our study is deep rather than broad: four questions, three languages, one
+8B model. We analyze only questions the model answers exactly correctly,
+which is necessary to study a succeeding mechanism but conditions every
+finding on success; mechanisms behind near-misses may differ. Ndebele and
+Tshiluba rules admit only $N{=}2$ counterfactual pairs, capping subspace
+rank at 2 and limiting statistical power; results there are directional.
+The subspace bases are fitted against a local linear surrogate rather than
+by interchange training through the network; although every subspace is
+subsequently validated by causal intervention on the model, agreement with
+standard end-to-end training remains to be quantified
+\TODO{resolve with the planned agreement experiment}. Single-token answer
+evaluation sidesteps multi-token generation. The grammar schema covers
+concatenative morphology and consistent ordering; fusional morphology,
+reduplication, and phonological alternation are outside its current scope.
+Finally, evidence for additive composition is consistency across 16 rule
+pairs, not a proof; larger rule inventories could reveal interference.
