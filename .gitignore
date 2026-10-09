@@ -70,3 +70,4 @@ tmp/
 
 # Paper build/fetch artifacts
 paper/fetched*/
+paper/naacl2027_build/

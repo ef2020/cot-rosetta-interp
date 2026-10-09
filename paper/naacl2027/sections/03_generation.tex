@@ -1,0 +1,38 @@
+\section{Certified Hypothesis Generation}
+\label{sec:generation}
+
+\paragraph{Grammar schema.} A grammar is a triple
+$G = (\mathcal{L}, \mathcal{M}, \mathcal{O})$ in a language-agnostic
+schema: a lexicon $\mathcal{L}$ mapping surface stems to semantic lemmas
+(Gilbertese \emph{noori-}\,$\leftrightarrow$\,`see'); morphology and
+agreement rules $\mathcal{M}$ (object-number verb suffixes \emph{-a}/\emph{-i};
+Bantu noun-class concord prefixes \emph{u-}/\emph{ba-}); and ordering
+constraints $\mathcal{O}$ (verb--object--subject in Gilbertese). Nothing in
+the schema names a language.
+
+\paragraph{Certification.} A frontier LLM (Claude 5 Opus) proposes an
+initial hypothesis space---candidate morpheme segmentations, lexical
+mappings, and ordering constraints---expressed as an Answer Set Program.
+The proposal step requires no reliability: given this space, the solver
+(\texttt{clingo}; \citealp{gebser2014}) searches for a minimal rule set
+that (i) regenerates every context translation pair exactly and (ii)
+uniquely derives the gold translation of the target question. Any rule set
+violating a single context pair is rejected. A rule set satisfying both
+constraints is \emph{solver-certified}. Certification does not claim the
+recovered grammar is the unique linguistic analysis of the language; it
+guarantees that, within the generated space, the rules account for all
+observed data and the answer. An offline induction mode enumerates all
+consistent rule sets, flagging puzzles whose context underdetermines the
+grammar. When certification fails, the solver returns the violated context
+pair as a counterexample, which is fed back to the proposer in a bounded
+repair loop. \TODO{report the loop quantitatively in
+\S\ref{sec:results-generation}}
+
+\paragraph{From rules to interventions.} Each certified rule $R$ is
+compiled into a counterfactual minimal pair: a base prompt
+$\mathbf{x}_{\text{base}}$ and a source prompt $\mathbf{x}_{\text{source}}$
+differing only in the feature $R$ governs (e.g., singular vs.\ plural
+object), with both sides re-certified. Across the four questions this
+yields $N{=}29$ rules: 6 (Gilbertese Q3), 7 (Ndebele Q1), and 8 each
+(Tshiluba Q7/Q8); the full schema, rule lists, and pairs are in
+Appendix~\ref{app:rules}.

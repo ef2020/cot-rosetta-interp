@@ -1,0 +1,14 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We showed that the hypothesis-generation step of causal interpretability
+can be delegated to task structure: a solver derives and certifies the
+grammatical rules a Rosetta puzzle requires, and standard interventions
+then test each certified rule inside the model. On
+\texttt{Llama-3.1-8B}, certified rules are implemented in depth-stratified,
+low-rank linear subspaces that compose additively---and are linearly
+decodable at the final token without being causally used there. Wherever a
+domain admits an executable hypothesis format and a checker, the same
+certify-then-validate loop turns ``the model seems to know $X$'' into two
+auditable claims: $X$ provably accounts for the task data, and the model
+causally computes it.

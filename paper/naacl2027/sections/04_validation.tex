@@ -1,0 +1,58 @@
+\section{Causal Validation}
+\label{sec:validation}
+
+All validation machinery is standard; we specify our configuration and one
+computational shortcut.
+
+\paragraph{Activation patching.} For rule $R$ with pair
+$(\mathbf{x}_{\text{base}}, \mathbf{x}_{\text{source}})$, we sweep residual-stream
+activations over every layer $\ell$ and token position $p$, patch
+$\mathbf{h}^{(\ell,p)}_{\text{base}} \leftarrow
+\mathbf{h}^{(\ell,p)}_{\text{source}}$, and report the normalized causal
+indirect effect on the logit difference $\Delta$ at the first divergent
+answer token,
+$\mathrm{CIE}_{\mathrm{norm}}(\ell,p) =
+(\Delta_{\text{patched}} - \Delta_{\text{base}}) /
+(\Delta_{\text{source}} - \Delta_{\text{base}})$,
+where $1$ is full causal recovery; the normalization is not capped, so
+overshoot can exceed $1$ \citep{vig2020,meng2022,zhang2024}.
+
+\paragraph{Subspace interventions.} To localize each rule below the level
+of a full residual-stream patch, we use interchange interventions on a
+rank-$k$ orthonormal subspace ($k \in \{1,2,4,8\}$): the standard low-rank
+DAS parameterization \citep{geiger2024das,wu2023boundless}, as implemented
+in pyvene \citep{wu2024pyvene} and used by ReFT \citep{wu2024reft} and
+AxBench \citep{wu2025axbench}. We claim no methodological novelty here.
+Our one deviation is computational: instead of optimizing the interchange
+objective through the frozen network, we fit the basis $W$ against a local
+linear logit surrogate (ridge regression on counterfactual activation
+pairs) and then validate the resulting subspace by causal intervention on
+the original model (Appendix~\ref{app:subspace}). \TODO{report agreement
+between surrogate-fitted and interchange-trained subspaces at matched
+sites and ranks; if agreement is high, the surrogate is a cheap
+approximation, otherwise we fall back to standard training}
+
+\paragraph{Circuits and composition.} Path patching
+\citep{wang2022ioi,goldowskydill2023} traces which attention heads
+transmit each rule's subspace signal, retaining edges with normalized
+effect $\ge 0.15$. For composition, each pair of independent rules
+$(A,B)$ is tested with a four-prompt bundle (base, source $A$, source $B$,
+joint $A{+}B$): we apply interventions in both orders and measure
+order-sensitivity by KL divergence between output distributions, plus
+recovery of the joint intervention (Appendix~\ref{app:commutativity}).
+
+\section{Experimental Setup}
+\label{sec:setup}
+
+We evaluate four questions from three UKLO puzzles: 2023 Gilbertese Q3,
+2019 Ndebele Q1, and Tshiluba Q7/Q8,\footnote{Puzzle sources are linked in
+Appendix~\ref{app:rules}; we study only questions \texttt{Llama-3.1-8B}
+answers exactly correctly in context, so interventions probe a mechanism
+that succeeds (see Limitations).} spanning Austronesian VOS morphology and
+Bantu SVO concord systems. All experiments use
+\texttt{meta-llama/Llama-3.1-8B} \citep{grattafiori2024} via NNsight/NDIF
+\citep{fiottokaufman2025}: 238{,}975 patched forward evaluations, subspace
+analyses at 145 causal sites, 5{,}069 path-patching traces, and 31
+paired-rule intervention runs (16 distinct rule pairs). Gilbertese
+supports $N{=}18$ counterfactual training pairs (ranks up to 8); Ndebele
+and Tshiluba support $N{=}2$ (ranks capped at 2).
